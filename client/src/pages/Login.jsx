@@ -20,13 +20,13 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const data = await loginUser(formData); // calling backend API
-      dispatch(setCredentials(data)); // saving user and token in redux
-      localStorage.setItem("token", data.token); // also storing token manually
-      navigate("/dashboard"); // navigate to dashboard after login
+      const data = await loginUser(formData);
+      dispatch(setCredentials(data));
+      localStorage.setItem("token", data.token);
+      navigate("/dashboard");
     } catch (error) {
       console.error(error.response.data.message);
-      alert(error.response.data.message); // optional error alert
+      alert(error.response.data.message);
     }
   };
 
