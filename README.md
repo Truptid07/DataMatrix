@@ -8,7 +8,7 @@ a team project given as part of our internship
 - Set up **Node.js + Express** project
 - Connect to **MongoDB Atlas** (cloud MongoDB)
 - Create **User Schema** (User model):
-    - Name, Email, Password (hashed), Role (user/admin)
+    - Name, Email, Psword (hashed), Role (user/admin)
 - Setup **JWT authentication**:
     - `/register`, `/login`, `/get-user`
 - Middleware:
