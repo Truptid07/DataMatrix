@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const Logo = () => {
@@ -9,7 +10,7 @@ const Logo = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <img src="./logo.png" alt="SheetSense Logo" className="w-12 h-12" />
+        <Link to="/"><img src="./logo.png" alt="SheetSense Logo" className="w-12 h-12" /></Link>
       </motion.header>
   )
 }
