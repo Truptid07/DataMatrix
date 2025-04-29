@@ -35,14 +35,14 @@ import { motion } from "framer-motion";
 const Dashboard = () => {
   return (
     <motion.div
-      className="min-h-screen w-full bg-gradient-to-b from-[#d3f2ff] to-white flex items-center justify-center transition-all duration-500"
+      className="min-h-screen w-full bg-gradient-to-br from-[#E0F7FA] to-[#B2EBF2] flex items-center justify-center transition-all duration-500"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
       <div className="text-center p-6">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">Welcome to Your Dashboard</h1>
-        <p className="text-lg text-gray-600">Upload your Excel files and start analyzing.</p>
+        <h1 className="text-4xl font-bold text-[#2E3C43] mb-4">Welcome to Your Dashboard</h1>
+        <p className="text-lg text-[#546E7A]">Upload your Excel files and start analyzing your data.</p>
       </div>
     </motion.div>
   );
