@@ -10,6 +10,7 @@ import Upload from "./components/Dashboard/Upload";
 import DashboardLayout from "./layouts/DashboardLayout";
 import DashboardHome from "./components/Dashboard/DashboardHome";
 import AdminHome from "./components/Admin/AdminHome";
+import Analyze from "./components/Dashboard/Analyze";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         >
           <Route index element={<DashboardHome />} />
           <Route path="upload" element={<Upload />} />
+          <Route path="analyze" element={<Analyze />} />
         </Route>
 
         {/* Admin Dashboard */}

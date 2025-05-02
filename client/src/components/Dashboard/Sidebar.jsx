@@ -56,7 +56,7 @@ function Sidebar() {
   const items = [
     { icon: <FaThLarge />, label: "Dashboard", path: "/dashboard" },
     { icon: <FaFileExcel />, label: "Upload Excel", path: "/dashboard/upload" },
-    { icon: <FaChartBar />, label: "Analyze Data" },
+    { icon: <FaChartBar />, label: "Analyze Data", path: "/dashboard/analyze" },
     { icon: <FaHistory />, label: "History" },
     { icon: <FaDownload />, label: "Downloads" },
     { icon: <FaRobot />, label: "AI Insights" },
