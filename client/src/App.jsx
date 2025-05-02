@@ -4,9 +4,12 @@ import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "./AdminRoute";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
-import AdminDashboard from "./pages/AdminDashboard";
+import AdminDashboard from "./layouts/AdminLayout";
+import Upload from "./components/Dashboard/Upload";
+import DashboardLayout from "./layouts/DashboardLayout";
+import DashboardHome from "./components/Dashboard/DashboardHome";
+import AdminHome from "./components/Admin/AdminHome";
 
 function App() {
   return (
@@ -16,15 +19,18 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Normal User Dashboard */}
+        {/* Normal User Dashboard with Nested Routes */}
         <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <DashboardLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<DashboardHome />} />
+          <Route path="upload" element={<Upload />} />
+        </Route>
 
         {/* Admin Dashboard */}
         <Route
@@ -36,7 +42,11 @@ function App() {
               </AdminRoute>
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<AdminHome />} />
+          {/* <Route path="users" element={<h1>Manage Users</h1>} />
+          <Route path="settings" element={<h1>Settings</h1>} /> */}
+        </Route>
 
         {/* Catch-all route */}
         <Route path="*" element={<Navigate to="/" replace />} />
