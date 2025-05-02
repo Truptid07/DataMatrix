@@ -25,3 +25,12 @@ export const uploadFile = async (req, res) => {
     res.status(500).json({ message: "Upload failed", error: err.message });
   }
 };
+
+export const getUserFiles = async (req, res) => {
+  try {
+    const files = await FileUpload.find({ user: req.user.id }).select("fileName createdAt");
+    res.status(200).json(files);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch files", error: err.message });
+  }
+};
