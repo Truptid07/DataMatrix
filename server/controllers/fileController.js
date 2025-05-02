@@ -34,3 +34,24 @@ export const getUserFiles = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch files", error: err.message });
   }
 };
+
+export const getSingleFile = async (req, res) => {
+  try {
+    const file = await FileUpload.findOne({
+      _id: req.params.id,
+      user: req.user.id,
+    });
+
+    if (!file) {
+      return res.status(404).json({ message: "File not found or unauthorized" });
+    }
+
+    res.status(200).json({
+      fileName: file.fileName,
+      headers: file.headers,
+      data: file.data,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch file", error: err.message });
+  }
+};
