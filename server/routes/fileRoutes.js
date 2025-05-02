@@ -1,0 +1,17 @@
+import express from "express";
+import upload from "../middlewares/uploadMiddleware.js";
+import { protect } from "../middlewares/authMiddleware.js";
+import { uploadFile } from "../controllers/fileController.js";
+import { getUserFiles } from "../controllers/fileController.js";
+import { getSingleFile } from "../controllers/fileController.js";
+
+
+const router = express.Router();
+
+router.post("/upload", protect, upload.single("file"), uploadFile);
+
+router.get("/:id", protect, getSingleFile);
+
+router.get("/", protect, getUserFiles);
+
+export default router;
