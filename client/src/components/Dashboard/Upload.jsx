@@ -2,6 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
+import Loader from "../Loader";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -20,6 +22,7 @@ function Upload() {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
   const { token } = useSelector((state) => state.auth);
+  const [loading, setLoading] = useState(false);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -34,17 +37,24 @@ function Upload() {
     formData.append("file", file);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/files/upload", formData, {
+      setLoading(true); // Start loader
+
+      const res = await axios.post(`${BASE_URL}/api/files/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
 
-      setMessage("✅ File uploaded successfully!");
-      console.log(res.data);
       setFile(null);
+      setTimeout(() => {
+        setLoading(false);
+        setMessage("✅ File uploaded successfully!");
+      }, 2000);
+
+      console.log(res.data);
     } catch (error) {
+      setLoading(false);
       const msg = error?.response?.data?.message || "Upload failed.";
       setMessage(`❌ ${msg}`);
     }
@@ -52,6 +62,11 @@ function Upload() {
 
   return (
     <div className="px-4 sm:px-6 md:px-8 py-10 min-h-screen bg-gradient-to-br from-[#dff1fd] to-[#b3dcf3] flex justify-center items-center">
+      {loading && (
+        <div className="fixed inset-0 backdrop-blur-md z-50 flex items-center justify-center">
+          <Loader />
+        </div>
+      )}
       <motion.form
         onSubmit={handleSubmit}
         className="bg-white/70 backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-2xl shadow-2xl w-full max-w-md"

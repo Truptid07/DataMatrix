@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import {
@@ -21,6 +21,10 @@ import ChartTypeSelector from "../Analyze/ChartTypeSelector";
 import ChartRenderer from "../Analyze/ChartRenderer";
 import ThreeDChart from "../Analyze/ThreeDChart";
 import ThreeDChartSelector from "../Analyze/ThreeDChartSelector";
+import html2canvas from "html2canvas";
+import { useFilesContext } from "../../context/FileContext";
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 ChartJS.register(
   CategoryScale,
@@ -38,50 +42,35 @@ ChartJS.register(
 
 function Analyze() {
   const { token } = useSelector((state) => state.auth);
-  const [files, setFiles] = useState([]);
-  const [selectedFileId, setSelectedFileId] = useState("");
-  const [fileData, setFileData] = useState(null);
+  const { files, selectedFileId, setSelectedFileId, fileData, setFileData } = useFilesContext();
   const [xAxis, setXAxis] = useState("");
   const [yAxis, setYAxis] = useState("");
   const [chartType, setChartType] = useState("none");
   const [selected3DChartType, setSelected3DChartType] = useState("none");
+  const chartRef = useRef();
+  const canvasRef = useRef(null);
 
-  // Fetch uploaded files
-  useEffect(() => {
-    const fetchFiles = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/files", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setFiles(res.data);
-      } catch (err) {
-        console.error("Failed to fetch files.");
-      }
-    };
-    fetchFiles();
-  }, [token]);
+  const handle2DownloadChart = async () => {
+    if (!chartRef.current) return;
 
-  // Fetch data for selected file
-  useEffect(() => {
-    const fetchFileData = async () => {
-      if (!selectedFileId) return;
-      try {
-        const res = await axios.get(
-          `http://localhost:5000/api/files/${selectedFileId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setFileData(res.data);
-        // Reset selections when new file is chosen
-        setXAxis("");
-        setYAxis("");
-        setChartType("none");
-        setSelected3DChartType("none");
-      } catch (err) {
-        console.error("Failed to fetch file data.");
-      }
-    };
-    fetchFileData();
-  }, [selectedFileId, token]);
+    const canvas = await html2canvas(chartRef.current, {
+      backgroundColor: "#ffffff",
+      useCORS: true,
+    });
+
+    const link = document.createElement("a");
+    link.download = "chart.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  };
+
+  const handle3Download = () => {
+    if (!canvasRef.current) return;
+    const link = document.createElement("a");
+    link.download = "3d_chart.png";
+    link.href = canvasRef.current.toDataURL("image/png");
+    link.click();
+  };
 
   // Clear all selections when no file is selected
   useEffect(() => {
@@ -125,13 +114,21 @@ function Analyze() {
 
           {/* Render 2D chart only when axes and chart type are selected */}
           {chartType !== "none" && xAxis && yAxis && (
-            <div className="bg-white p-6 rounded shadow mb-6">
-              <ChartRenderer
-                fileData={fileData}
-                xAxis={xAxis}
-                yAxis={yAxis}
-                chartType={chartType}
-              />
+            <div>
+              <div className="bg-white p-6 rounded shadow mb-6" ref={chartRef}>
+                <ChartRenderer
+                  fileData={fileData}
+                  xAxis={xAxis}
+                  yAxis={yAxis}
+                  chartType={chartType}
+                />
+              </div>
+              <button
+                onClick={handle2DownloadChart}
+                className="mb-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              >
+                Download Chart as PNG
+              </button>
             </div>
           )}
 
@@ -148,13 +145,22 @@ function Analyze() {
 
             {/* Render 3D chart only when selected, and axes are chosen */}
             {selected3DChartType !== "none" && xAxis && yAxis && (
-              <div className="w-full overflow-x-auto">
-                <ThreeDChart
-                  fileData={fileData}
-                  xAxis={xAxis}
-                  yAxis={yAxis}
-                  selected3DChartType={selected3DChartType}
-                />
+              <div>
+                <div className="w-full overflow-x-auto">
+                  <ThreeDChart
+                    fileData={fileData}
+                    xAxis={xAxis}
+                    yAxis={yAxis}
+                    selected3DChartType={selected3DChartType}
+                    canvasRef={canvasRef}
+                  />
+                </div>
+                <button
+                  onClick={handle3Download}
+                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Download 3D Chart
+                </button>
               </div>
             )}
           </section>

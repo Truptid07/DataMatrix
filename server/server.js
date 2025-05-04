@@ -1,12 +1,14 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import dotenv from "dotenv";
-import fileRoutes from "./routes/fileRoutes.js";
 
+import fileRoutes from "./routes/fileRoutes.js";
+import insightsRoutes from "./routes/insightsRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 
-dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -18,6 +20,8 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 
 app.use("/api/files", fileRoutes);
+
+app.use("/api/insights", insightsRoutes);
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
