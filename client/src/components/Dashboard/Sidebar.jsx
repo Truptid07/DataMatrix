@@ -57,9 +57,8 @@ function Sidebar() {
     { icon: <FaThLarge />, label: "Dashboard", path: "/dashboard" },
     { icon: <FaFileExcel />, label: "Upload Excel", path: "/dashboard/upload" },
     { icon: <FaChartBar />, label: "Analyze Data", path: "/dashboard/analyze" },
-    { icon: <FaHistory />, label: "History" },
-    { icon: <FaDownload />, label: "Downloads" },
-    { icon: <FaRobot />, label: "AI Insights" },
+    { icon: <FaHistory />, label: "History", path: "/dashboard/history" },
+    { icon: <FaRobot />, label: "AI Insights", path: "/dashboard/ai-insights" },
     { icon: <FaCog />, label: "Settings" },
   ];
 
