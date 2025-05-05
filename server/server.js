@@ -7,6 +7,7 @@ import cors from "cors";
 import fileRoutes from "./routes/fileRoutes.js";
 import insightsRoutes from "./routes/insightsRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 
 const app = express();
@@ -22,6 +23,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/files", fileRoutes);
 
 app.use("/api/insights", insightsRoutes);
+
+app.use("/api/admin", adminRoutes);
+
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
