@@ -24,24 +24,27 @@ function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true); // Start loading
+  
     try {
-      // Simulate 2 seconds of loading
-      setTimeout(async () => {
-        const data = await loginUser(formData);
-        dispatch(setCredentials(data));
-        localStorage.setItem("token", data.token);
-        if (data.user.role === "admin") {
-          navigate("/admin");
-        } else {
-          navigate("/dashboard");
-        }
-      }, 2000); // Simulate the delay here (2 seconds)
+      // Optional: simulate delay before request
+      await new Promise((res) => setTimeout(res, 2000));
+  
+      const data = await loginUser(formData);
+      dispatch(setCredentials(data));
+      localStorage.setItem("token", data.token);
+  
+      if (data.user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (error) {
-      console.error(error.response?.data?.message || "Login failed");
+      navigate("/");
       alert(error.response?.data?.message || "Login failed");
       setIsLoading(false); // Stop loading in case of error
     }
   };
+  
 
   return (
     <form

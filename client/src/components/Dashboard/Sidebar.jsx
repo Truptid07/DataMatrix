@@ -59,7 +59,7 @@ function Sidebar() {
     { icon: <FaChartBar />, label: "Analyze Data", path: "/dashboard/analyze" },
     { icon: <FaHistory />, label: "History", path: "/dashboard/history" },
     { icon: <FaRobot />, label: "AI Insights", path: "/dashboard/ai-insights" },
-    { icon: <FaCog />, label: "Settings" },
+    { icon: <FaCog />, label: "Settings", path: "/dashboard/settings" },
   ];
 
   const handleNavigate = (path) => {
