@@ -8,7 +8,7 @@ import fileRoutes from "./routes/fileRoutes.js";
 import insightsRoutes from "./routes/insightsRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
-
+import adminUserRoutes from "./routes/adminUserRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -26,6 +26,7 @@ app.use("/api/insights", insightsRoutes);
 
 app.use("/api/admin", adminRoutes);
 
+app.use("/api/admin/users", adminUserRoutes);
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)

@@ -14,6 +14,7 @@ import Analyze from "./components/Dashboard/Analyze";
 import History from "./components/Dashboard/History";
 import AIInsights from "./components/Dashboard/AIInsights";
 import Settings from "./components/Dashboard/Settings";
+import AdminManageUsers from "./components/Admin/AdminManageUsers";
 
 function App() {
   return (
@@ -52,8 +53,8 @@ function App() {
           }
         >
           <Route index element={<AdminHome />} />
-          {/* <Route path="users" element={<h1>Manage Users</h1>} />
-          <Route path="settings" element={<h1>Settings</h1>} /> */}
+          <Route path="users" element={<AdminManageUsers />} />
+          {/* <Route path="settings" element={<h1>Settings</h1>} /> */}
         </Route>
 
         {/* Catch-all route */}
