@@ -73,24 +73,24 @@ function ThreeDChart({
     };
 
     // Font loader for labels
-    const loader = new FontLoader();
-    loader.load("./helvetiker_regular.typeface.json", (font) => {
-      labels.forEach((label, idx) => {
-        const textGeo = new TextGeometry(label, {
-          font,
-          size: 0.4,
-          height: 0.05,
-        });
-        const textMat = new THREE.MeshBasicMaterial({ color: 0x333333 });
-        const txt = new THREE.Mesh(textGeo, textMat);
-        txt.position.set(
-          idx * (barW + gap) - (labels.length * (barW + gap)) / 2,
-          0,
-          0.5
-        );
-        scene.add(txt);
-      });
-    });
+    // const loader = new FontLoader();
+    // loader.load("./helvetiker_regular.typeface.json", (font) => {
+    //   labels.forEach((label, idx) => {
+    //     const textGeo = new TextGeometry(label, {
+    //       font,
+    //       size: 0.4,
+    //       height: 0.05,
+    //     });
+    //     const textMat = new THREE.MeshBasicMaterial({ color: 0x333333 });
+    //     const txt = new THREE.Mesh(textGeo, textMat);
+    //     txt.position.set(
+    //       idx * (barW + gap) - (labels.length * (barW + gap)) / 2,
+    //       0,
+    //       0.5
+    //     );
+    //     scene.add(txt);
+    //   });
+    // });
 
     // Chart types
     if (selected3DChartType === "bar3d") {

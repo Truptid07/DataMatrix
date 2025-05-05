@@ -11,8 +11,9 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import DashboardHome from "./components/Dashboard/DashboardHome";
 import AdminHome from "./components/Admin/AdminHome";
 import Analyze from "./components/Dashboard/Analyze";
-import History from "./pages/History";
+import History from "./components/Dashboard/History";
 import AIInsights from "./components/Dashboard/AIInsights";
+import Settings from "./components/Dashboard/Settings";
 
 function App() {
   return (
@@ -36,7 +37,7 @@ function App() {
           <Route path="analyze" element={<Analyze />} />
           <Route path="history" element={<History />} />
           <Route path="ai-insights" element={<AIInsights />} />
-          {/* <Route path="settings" element={<h1>Settings</h1>} /> */}
+          <Route path="settings" element={<Settings />} />
         </Route>
 
         {/* Admin Dashboard */}
