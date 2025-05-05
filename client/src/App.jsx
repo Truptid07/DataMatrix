@@ -15,6 +15,8 @@ import History from "./components/Dashboard/History";
 import AIInsights from "./components/Dashboard/AIInsights";
 import Settings from "./components/Dashboard/Settings";
 import AdminManageUsers from "./components/Admin/AdminManageUsers";
+import AdminManageFiles from "./components/Admin/AdminManageFiles";
+import AdminSettings from "./components/Admin/AdminSettings";
 
 function App() {
   return (
@@ -54,7 +56,8 @@ function App() {
         >
           <Route index element={<AdminHome />} />
           <Route path="users" element={<AdminManageUsers />} />
-          {/* <Route path="settings" element={<h1>Settings</h1>} /> */}
+          <Route path="files" element={<AdminManageFiles />} />
+          <Route path="settings" element={<AdminSettings />} />
         </Route>
 
         {/* Catch-all route */}
