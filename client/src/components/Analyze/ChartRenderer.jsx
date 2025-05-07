@@ -10,14 +10,13 @@ import {
 } from "react-chartjs-2";
 
 function ChartRenderer({ fileData, xAxis, yAxis, chartType }) {
-
   if (!fileData || !xAxis || !yAxis || chartType === "none") return null;
 
   const canRenderChart = (chartType, xAxis, yAxis) => {
     if (chartType === "none") return true;
     if (!xAxis || !yAxis) return false;
-    if (chartType === "pie" || chartType === "doughnut") {
-      if (yAxis !== "numeric") return false;
+    if ((chartType === "pie" || chartType === "doughnut") && yAxis !== "numeric") {
+      return false;
     }
     return true;
   };
@@ -41,6 +40,7 @@ function ChartRenderer({ fileData, xAxis, yAxis, chartType }) {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: { position: "top" },
     },
@@ -53,15 +53,22 @@ function ChartRenderer({ fileData, xAxis, yAxis, chartType }) {
       </div>
     );
   }
-  
+
+  const chartWrapper = (chartComponent) => (
+    <div className="w-full max-w-full overflow-x-auto">
+      <div className="w-[200px] md:w-[450px] lg:w-[800px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[500px]">
+        {chartComponent}
+      </div>
+    </div>
+  );
 
   switch (chartType) {
     case "bar":
-      return <Bar data={data} options={options} />;
+      return chartWrapper(<Bar data={data} options={options} />);
     case "line":
-      return <Line data={data} options={options} />;
+      return chartWrapper(<Line data={data} options={options} />);
     case "area":
-      return (
+      return chartWrapper(
         <Line
           data={data}
           options={{
@@ -71,15 +78,15 @@ function ChartRenderer({ fileData, xAxis, yAxis, chartType }) {
         />
       );
     case "pie":
-      return <Pie data={data} options={options} />;
+      return chartWrapper(<Pie data={data} options={options} />);
     case "doughnut":
-      return <Doughnut data={data} options={options} />;
+      return chartWrapper(<Doughnut data={data} options={options} />);
     case "polar":
-      return <PolarArea data={data} options={options} />;
+      return chartWrapper(<PolarArea data={data} options={options} />);
     case "radar":
-      return <Radar data={data} options={options} />;
+      return chartWrapper(<Radar data={data} options={options} />);
     case "scatter":
-      return (
+      return chartWrapper(
         <Scatter
           data={{
             datasets: [
@@ -96,7 +103,7 @@ function ChartRenderer({ fileData, xAxis, yAxis, chartType }) {
         />
       );
     case "bubble":
-      return (
+      return chartWrapper(
         <Bubble
           data={{
             datasets: [
@@ -114,7 +121,7 @@ function ChartRenderer({ fileData, xAxis, yAxis, chartType }) {
         />
       );
     case "funnel":
-      return (
+      return chartWrapper(
         <Bar
           data={{
             labels: labels,
@@ -122,9 +129,7 @@ function ChartRenderer({ fileData, xAxis, yAxis, chartType }) {
               {
                 label: `${yAxis} by ${xAxis}`,
                 data: values,
-                funnel: {
-                  dynamicHeight: true,
-                },
+                funnel: { dynamicHeight: true },
                 backgroundColor: [
                   "#42A5F5",
                   "#64B5F6",
@@ -136,14 +141,13 @@ function ChartRenderer({ fileData, xAxis, yAxis, chartType }) {
             ],
           }}
           options={{
+            responsive: true,
+            maintainAspectRatio: false,
             indexAxis: "y",
-            plugins: {
-              legend: { display: false },
-            },
+            plugins: { legend: { display: false } },
           }}
         />
       );
-
     case "waterfall":
       const cumulative = [];
       const deltas = [];
@@ -154,7 +158,7 @@ function ChartRenderer({ fileData, xAxis, yAxis, chartType }) {
         runningTotal += val;
       });
 
-      return (
+      return chartWrapper(
         <Bar
           data={{
             labels: labels,
@@ -175,6 +179,7 @@ function ChartRenderer({ fileData, xAxis, yAxis, chartType }) {
           }}
           options={{
             responsive: true,
+            maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
               x: { stacked: true },
@@ -183,9 +188,8 @@ function ChartRenderer({ fileData, xAxis, yAxis, chartType }) {
           }}
         />
       );
-
     default:
-      return <Bar data={data} options={options} />;
+      return chartWrapper(<Bar data={data} options={options} />);
   }
 }
 

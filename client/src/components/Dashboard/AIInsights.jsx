@@ -1,4 +1,3 @@
-// src/pages/AIInsights.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useFilesContext } from "../../context/FileContext";
@@ -6,6 +5,7 @@ import AxisSelector from "../Analyze/AxisSelector";
 import ChartTypeSelector from "../Analyze/ChartTypeSelector";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
+import { motion } from "framer-motion";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -60,7 +60,6 @@ const AIInsights = () => {
       });
       setInsights(res.data);
     } catch (err) {
-      console.error(err);
       setError("Failed to fetch insights. Please try again.");
     } finally {
       setLoading(false);
@@ -84,7 +83,7 @@ const AIInsights = () => {
   const handleExportPdf = () => {
     const doc = new jsPDF();
     let y = 10;
-    insights.forEach((insight, i) => {
+    insights.forEach((insight) => {
       doc.text(`${insight.type}:`, 10, y);
       y += 7;
       const lines = doc.splitTextToSize(insight.text, 180);
@@ -113,25 +112,22 @@ const AIInsights = () => {
       );
       const link = res.data.url;
       setShareLink(link);
-  
-      // Extract shareId from the link (e.g., last segment of URL)
       const id = link.split("/").pop();
       setShareId(id);
-  
       await navigator.clipboard.writeText(link);
       alert("Link copied to clipboard!");
     } catch (err) {
-      console.error("Error sharing insight:", err);
       setError("Failed to generate share link. Please try again.");
     } finally {
       setLoading(false);
     }
-  };  
+  };
 
   const handleEmailShare = async () => {
-    if (!email || !shareId) return alert("Please share first, then enter a valid email.");
+    if (!email || !shareId)
+      return alert("Please share first, then enter a valid email.");
     try {
-      const res = await axios.post(
+      await axios.post(
         `${BASE_URL}/api/insights/email`,
         { email, shareId },
         {
@@ -143,22 +139,24 @@ const AIInsights = () => {
       alert("Email sent successfully!");
       setEmail("");
       setShowEmailInput(false);
-    } catch (err) {
-      console.error("Error emailing insight:", err);
+    } catch {
       alert("Failed to send email.");
     }
   };
-  
-  
 
   return (
-    <div className="p-6 min-h-screen bg-gray-100 dark:bg-[#34495E]">
-      <h2 className="text-2xl font-semibold mb-6 text-white">🧠 AI Insights</h2>
+    <motion.div
+      className="p-6 min-h-screen bg-[#E6F0FA] animate-fade-in-up"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      <h2 className="text-2xl font-bold mb-6 text-blue-800">🧠 AI Insights</h2>
 
-      <div className="mb-4">
-        <label className="block text-white mb-2">Select File</label>
+      <div className="mb-4 animate-fade-in-up">
+        <label className="block text-blue-800 mb-2">Select File</label>
         <select
-          className="w-full p-2 rounded bg-white"
+          className="w-full p-2 rounded border border-blue-300 bg-white"
           value={selectedFileId}
           onChange={(e) => setSelectedFileId(e.target.value)}
         >
@@ -173,83 +171,110 @@ const AIInsights = () => {
 
       {availableColumns.length > 0 && (
         <>
-          <AxisSelector
-            headers={availableColumns}
-            xAxis={xAxis}
-            yAxis={yAxis}
-            setXAxis={setXAxis}
-            setYAxis={setYAxis}
-          />
+          <div className="animate-fade-in-up">
+            <AxisSelector
+              headers={availableColumns}
+              xAxis={xAxis}
+              yAxis={yAxis}
+              setXAxis={setXAxis}
+              setYAxis={setYAxis}
+            />
 
-          <ChartTypeSelector
-            chartType={chartType}
-            setChartType={setChartType}
-          />
+            <ChartTypeSelector
+              chartType={chartType}
+              setChartType={setChartType}
+            />
 
-          <button
-            onClick={handleGenerateInsights}
-            disabled={!xAxis || !yAxis}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-          >
-            {loading ? "Generating..." : "Generate Insights"}
-          </button>
+            <button
+              onClick={handleGenerateInsights}
+              disabled={!xAxis || !yAxis}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 transition duration-300"
+            >
+              {loading ? "Generating..." : "Generate Insights"}
+            </button>
+          </div>
         </>
       )}
 
-      {error && <p className="mt-4 text-red-600">{error}</p>}
+      {error && <p className="mt-4 text-red-600 animate-fade-in-up">{error}</p>}
 
       {insights.length > 0 && (
         <>
-          <div className="mt-6 flex flex-wrap gap-4">
-            <button
+          <div className="mt-6 flex flex-wrap gap-4 animate-fade-in-up">
+            <motion.button
+              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
               onClick={handleExportTxt}
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Export .txt
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition"
               onClick={handleExportPdf}
-              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Export .pdf
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
               onClick={handleShare}
-              className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Share Link
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              className="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600 transition"
               onClick={() => setShowEmailInput(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Email Link
-            </button>
+            </motion.button>
           </div>
 
           {showEmailInput && (
-            <div className="mt-4 flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+            <motion.div className="mt-4 flex flex-col sm:flex-row gap-2 items-start sm:items-center animate-fade-in-up">
               <input
                 type="email"
                 placeholder="Enter email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="px-4 py-2 border border-gray-300 rounded w-full sm:w-auto"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
               />
-              <button
+              <motion.button
                 onClick={handleEmailShare}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                className="px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-700 transition"
               >
                 Send Email
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           )}
 
-          <div className="mt-6 grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+          <div className="mt-6 grid gap-4 sm:grid-cols-1 md:grid-cols-2 animate-fade-in-up">
             {insights.map((insight, i) => (
-              <div key={i} className="p-4 bg-white rounded shadow">
+              <motion.div
+                key={i}
+                className="p-4 bg-white rounded shadow transition duration-300"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: { staggerChildren: 0.2 },
+                  },
+                }}
+              >
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-semibold">{insight.type}</h3>
+                  <h3 className="font-semibold text-blue-800">
+                    {insight.type}
+                  </h3>
                   <button
                     onClick={() =>
                       handleCopy(`${insight.type}: ${insight.text}`)
@@ -259,13 +284,13 @@ const AIInsights = () => {
                     Copy
                   </button>
                 </div>
-                <p>{insight.text}</p>
-              </div>
+                <p className="text-gray-700">{insight.text}</p>
+              </motion.div>
             ))}
           </div>
         </>
       )}
-    </div>
+    </motion.div>
   );
 };
 

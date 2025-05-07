@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { motion } from "framer-motion";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -77,25 +78,35 @@ const History = () => {
   if (loading) return <p className="text-center">Loading...</p>;
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Uploaded Files</h2>
+    <div className="p-4 md:p-8 bg-[#f0f8ff] min-h-screen">
+      <h2 className="text-2xl font-bold text-blue-800 mb-6 animate-fade-in-up">
+        📁 Uploaded Files
+      </h2>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white shadow rounded-md">
+        <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden animate-fade-in-up">
           <thead>
-            <tr className="bg-gray-100 text-left">
-              <th className="p-3">📄 Filename</th>
-              <th className="p-3">🗓 Upload Date</th>
-              <th className="p-3">🔍 View / ⬇️ Download</th>
-              <th className="p-3">❌ Delete</th>
+            <tr className="bg-blue-100 text-blue-800 text-left">
+              <th className="p-4">📄 Filename</th>
+              <th className="p-4">🗓 Upload Date</th>
+              <th className="p-4">🔍 View / ⬇️ Download</th>
+              <th className="p-4">❌ Delete</th>
             </tr>
           </thead>
           <tbody>
-            {files.map((file) => (
-              <tr key={file._id} className="border-t hover:bg-gray-50">
-                <td className="p-3">{file.fileName}</td>
-                <td className="p-3">{new Date(file.createdAt).toLocaleString()}</td>
-                <td className="p-3">
+            {files.map((file, index) => (
+              <motion.tr
+                key={file._id}
+                className="border-t hover:bg-blue-50"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+              >
+                <td className="p-4">{file.fileName}</td>
+                <td className="p-4">
+                  {new Date(file.createdAt).toLocaleString()}
+                </td>
+                <td className="p-4">
                   <button
                     className="text-blue-600 hover:underline mr-4"
                     onClick={() => handleView(file._id)}
@@ -109,7 +120,7 @@ const History = () => {
                     Download
                   </button>
                 </td>
-                <td className="p-3">
+                <td className="p-4">
                   <button
                     className="text-red-600 hover:underline"
                     onClick={() => handleDelete(file._id)}
@@ -117,7 +128,7 @@ const History = () => {
                     Delete
                   </button>
                 </td>
-              </tr>
+              </motion.tr>
             ))}
             {files.length === 0 && (
               <tr>
@@ -130,12 +141,16 @@ const History = () => {
         </table>
       </div>
 
-      {/* Modal for viewing file content */}
+      {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg max-w-2xl w-full max-h-[80vh] overflow-auto">
+        <div className="fixed inset-0 backdrop-blur-3xl flex justify-center items-center z-50">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white p-6 rounded shadow-lg max-w-2xl w-full max-h-[80vh] overflow-auto"
+          >
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold">File Content</h3>
+              <h3 className="text-lg font-bold text-blue-700">File Content</h3>
               <button
                 onClick={() => setShowModal(false)}
                 className="text-red-500 font-bold"
@@ -143,8 +158,10 @@ const History = () => {
                 ✖
               </button>
             </div>
-            <pre className="text-sm whitespace-pre-wrap">{JSON.stringify(selectedFileContent, null, 2)}</pre>
-          </div>
+            <pre className="text-sm whitespace-pre-wrap text-gray-700">
+              {JSON.stringify(selectedFileContent, null, 2)}
+            </pre>
+          </motion.div>
         </div>
       )}
     </div>
