@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import Loader from "../Loader";
+import { AnimatePresence } from "framer-motion";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const fadeUp = {
@@ -23,10 +25,17 @@ function Upload() {
   const [message, setMessage] = useState("");
   const { token } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
     setMessage("");
+  };
+
+  const handleRemoveFile = () => {
+    setFile(null);
+    setMessage("");
+    document.getElementById("upload-input").value = "";
   };
 
   const handleSubmit = async (e) => {
@@ -37,7 +46,7 @@ function Upload() {
     formData.append("file", file);
 
     try {
-      setLoading(true); // Start loader
+      setLoading(true);
 
       const res = await axios.post(`${BASE_URL}/api/files/upload`, formData, {
         headers: {
@@ -62,11 +71,18 @@ function Upload() {
 
   return (
     <div className="px-4 sm:px-6 md:px-8 py-10 min-h-screen bg-gradient-to-br from-[#dff1fd] to-[#b3dcf3] flex justify-center items-center">
-      {loading && (
-        <div className="fixed inset-0 backdrop-blur-md z-50 flex items-center justify-center">
-          <Loader />
-        </div>
-      )}
+      <AnimatePresence>
+        {loading && (
+          <motion.div
+            className="fixed inset-0 backdrop-blur-md z-50 flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <Loader />
+          </motion.div>
+        )}
+      </AnimatePresence>
       <motion.form
         onSubmit={handleSubmit}
         className="bg-white/70 backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-2xl shadow-2xl w-full max-w-md"
@@ -89,20 +105,55 @@ function Upload() {
           Supported formats: .xls, .xlsx
         </motion.p>
 
-        <motion.input
-          type="file"
-          accept=".xls,.xlsx"
-          onChange={handleFileChange}
-          className="block w-full mb-6 file:px-4 file:py-2 file:border-0 file:rounded-full file:bg-[#007ea7] file:text-white file:cursor-pointer file:hover:bg-[#009dc4] text-sm text-[#2E3C43]"
+        <motion.div
+          className="mb-4 flex justify-center"
           variants={fadeUp}
           custom={3}
-        />
+        >
+          <input
+            id="upload-input"
+            type="file"
+            accept=".xls,.xlsx"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <label
+            htmlFor="upload-input"
+            className="inline-block px-4 py-2 bg-[#007ea7] text-white rounded-full cursor-pointer hover:bg-[#009dc4] text-sm"
+          >
+            Choose File
+          </label>
+        </motion.div>
+
+        {file && (
+          <motion.div
+            className="relative bg-white border rounded-lg p-3 mb-4 flex items-center justify-between shadow-sm"
+            variants={fadeUp}
+            custom={4}
+          >
+            <span className="text-sm text-[#2E3C43] truncate max-w-[85%]">
+              {file.name}
+            </span>
+            <motion.button
+              type="button"
+              onClick={handleRemoveFile}
+              className="absolute top-1/2 -translate-y-1/2 right-2 text-[#ff4d4d] text-lg font-bold"
+              title="Remove file"
+              initial={{ scale: 0.6, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              whileHover={{ scale: 1.2 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+              ×
+            </motion.button>
+          </motion.div>
+        )}
 
         <motion.button
           type="submit"
           className="w-full bg-[#00ACC1] text-white py-2 rounded-xl shadow-md hover:bg-[#0097a7] transition duration-200"
           variants={fadeUp}
-          custom={4}
+          custom={5}
         >
           Upload
         </motion.button>
@@ -113,10 +164,20 @@ function Upload() {
               message.startsWith("✅") ? "text-green-600" : "text-red-600"
             }`}
             variants={fadeUp}
-            custom={5}
+            custom={6}
           >
             {message}
           </motion.p>
+        )}
+        {message.startsWith("✅") && (
+          <motion.button
+            onClick={() => navigate("/dashboard/analyze")}
+            className="mt-4 w-full bg-[#007ea7] text-white py-2 rounded-xl shadow-md hover:bg-[#009dc4] transition duration-200"
+            variants={fadeUp}
+            custom={7}
+          >
+            Analyze
+          </motion.button>
         )}
       </motion.form>
     </div>
