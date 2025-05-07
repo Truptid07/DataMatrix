@@ -15,6 +15,7 @@ import {
   Filler,
 } from "chart.js";
 import { FunnelController } from "chartjs-chart-funnel";
+import { motion } from "framer-motion";
 import FileSelector from "../Analyze/FileSelector";
 import AxisSelector from "../Analyze/AxisSelector";
 import ChartTypeSelector from "../Analyze/ChartTypeSelector";
@@ -40,6 +41,19 @@ ChartJS.register(
   FunnelController
 );
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i = 1) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.15,
+      duration: 0.6,
+      ease: "easeOut",
+    },
+  }),
+};
+
 function Analyze() {
   const { token } = useSelector((state) => state.auth);
   const { files, selectedFileId, setSelectedFileId, fileData, setFileData } = useFilesContext();
@@ -52,12 +66,10 @@ function Analyze() {
 
   const handle2DownloadChart = async () => {
     if (!chartRef.current) return;
-
     const canvas = await html2canvas(chartRef.current, {
       backgroundColor: "#ffffff",
       useCORS: true,
     });
-
     const link = document.createElement("a");
     link.download = "chart.png";
     link.href = canvas.toDataURL("image/png");
@@ -72,7 +84,6 @@ function Analyze() {
     link.click();
   };
 
-  // Clear all selections when no file is selected
   useEffect(() => {
     if (!selectedFileId) {
       setFileData(null);
@@ -84,38 +95,52 @@ function Analyze() {
   }, [selectedFileId]);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6 text-[#2E3C43]">
+    <motion.div
+      className="p-4 sm:p-6 lg:p-10"
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.h1
+        className="text-2xl font-bold mb-6 text-[#2E3C43]"
+        variants={fadeUp}
+        custom={1}
+      >
         Analyze Your Data
-      </h1>
+      </motion.h1>
 
-      {/* File Selector */}
-      <FileSelector
-        files={files}
-        selectedFileId={selectedFileId}
-        setSelectedFileId={setSelectedFileId}
-      />
+      <motion.div variants={fadeUp} custom={2}>
+        <FileSelector
+          files={files}
+          selectedFileId={selectedFileId}
+          setSelectedFileId={setSelectedFileId}
+        />
+      </motion.div>
 
-      {/* Show 2D controls only when a file is selected */}
       {fileData && (
         <>
-          <AxisSelector
-            headers={fileData.headers}
-            xAxis={xAxis}
-            yAxis={yAxis}
-            setXAxis={setXAxis}
-            setYAxis={setYAxis}
-          />
+          <motion.div variants={fadeUp} custom={3}>
+            <AxisSelector
+              headers={fileData.headers}
+              xAxis={xAxis}
+              yAxis={yAxis}
+              setXAxis={setXAxis}
+              setYAxis={setYAxis}
+            />
+          </motion.div>
 
-          <ChartTypeSelector
-            chartType={chartType}
-            setChartType={setChartType}
-          />
+          <motion.div variants={fadeUp} custom={4}>
+            <ChartTypeSelector
+              chartType={chartType}
+              setChartType={setChartType}
+            />
+          </motion.div>
 
-          {/* Render 2D chart only when axes and chart type are selected */}
           {chartType !== "none" && xAxis && yAxis && (
-            <div>
-              <div className="bg-white p-6 rounded shadow mb-6" ref={chartRef}>
+            <motion.div variants={fadeUp} custom={5}>
+              <div
+                className="bg-white p-4 sm:p-6 rounded shadow mb-6 overflow-x-auto"
+                ref={chartRef}
+              >
                 <ChartRenderer
                   fileData={fileData}
                   xAxis={xAxis}
@@ -129,11 +154,14 @@ function Analyze() {
               >
                 Download Chart as PNG
               </button>
-            </div>
+            </motion.div>
           )}
 
-          {/* 3D Chart Options Section */}
-          <section className="mt-6 bg-white shadow-md rounded-lg p-4 space-y-4">
+          <motion.section
+            variants={fadeUp}
+            custom={6}
+            className="mt-6 bg-white shadow-md rounded-lg p-4 space-y-4"
+          >
             <h2 className="text-lg font-semibold text-gray-800">
               3D Chart Options
             </h2>
@@ -143,7 +171,6 @@ function Analyze() {
               setSelected3DChartType={setSelected3DChartType}
             />
 
-            {/* Render 3D chart only when selected, and axes are chosen */}
             {selected3DChartType !== "none" && xAxis && yAxis && (
               <div>
                 <div className="w-full overflow-x-auto">
@@ -163,10 +190,10 @@ function Analyze() {
                 </button>
               </div>
             )}
-          </section>
+          </motion.section>
         </>
       )}
-    </div>
+    </motion.div>
   );
 }
 
