@@ -5,6 +5,8 @@ import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import Loader from "../Loader";
 import { AnimatePresence } from "framer-motion";
+import * as XLSX from "xlsx";
+import { useLocalFile } from "../../context/LocalFileContext";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const fadeUp = {
@@ -26,6 +28,7 @@ function Upload() {
   const { token } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { setLocalFile } = useLocalFile();
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -40,32 +43,59 @@ function Upload() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!file) return setMessage("Please select a file to upload.");
+    if (!file) return setMessage("Please select a file.");
 
+    setLoading(true);
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+        const headers = Object.keys(jsonData[0] || {});
+        const filePayload = {
+          fileName: file.name,
+          headers,
+          data: jsonData,
+        };
+
+        setLocalFile(filePayload);
+        setMessage("✅ File loaded locally. You can now analyze or upload.");
+      } catch (err) {
+        console.error("Parsing error:", err);
+        setMessage("❌ Failed to parse the file.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    reader.onerror = () => {
+      setLoading(false);
+      setMessage("❌ Failed to read the file.");
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  const handleUploadToServer = async () => {
     const formData = new FormData();
     formData.append("file", file);
 
     try {
       setLoading(true);
-
       const res = await axios.post(`${BASE_URL}/api/files/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
-
-      setFile(null);
-      setTimeout(() => {
-        setLoading(false);
-        setMessage("✅ File uploaded successfully!");
-      }, 2000);
-
-      console.log(res.data);
-    } catch (error) {
       setLoading(false);
-      const msg = error?.response?.data?.message || "Upload failed.";
-      setMessage(`❌ ${msg}`);
+      alert("✅ File uploaded to server.");
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+      alert("❌ Upload failed.");
     }
   };
 
@@ -170,14 +200,20 @@ function Upload() {
           </motion.p>
         )}
         {message.startsWith("✅") && (
-          <motion.button
-            onClick={() => navigate("/dashboard/analyze")}
-            className="mt-4 w-full bg-[#007ea7] text-white py-2 rounded-xl shadow-md hover:bg-[#009dc4] transition duration-200"
-            variants={fadeUp}
-            custom={7}
-          >
-            Analyze
-          </motion.button>
+          <motion.div className="flex gap-2 mt-4" variants={fadeUp} custom={7}>
+            <button
+              onClick={() => navigate("/dashboard/analyze")}
+              className="w-full bg-[#007ea7] text-white py-2 rounded-xl shadow-md hover:bg-[#009dc4] transition duration-200"
+            >
+              Analyze without saving
+            </button>
+            <button
+              onClick={handleUploadToServer}
+              className="w-full bg-green-600 text-white py-2 rounded-xl shadow-md hover:bg-green-700 transition duration-200"
+            >
+              Upload to server
+            </button>
+          </motion.div>
         )}
       </motion.form>
     </div>
