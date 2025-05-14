@@ -1,5 +1,6 @@
-// src/pages/AdminManageUsers.jsx
 import React, { useEffect, useState } from "react";
+import { FiTrash2 } from "react-icons/fi";
+import { FaRegEdit } from "react-icons/fa";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -9,6 +10,7 @@ export default function AdminManageUsers() {
   const [users, setUsers] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [formState, setFormState] = useState({});
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   const fetchUsers = async () => {
@@ -41,11 +43,9 @@ export default function AdminManageUsers() {
     try {
       const body = { ...formState };
       if (!body.password) delete body.password;
-      const res = await axios.put(
-        `${BASE_URL}/api/admin/users/${id}`,
-        body,
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-      );
+      const res = await axios.put(`${BASE_URL}/api/admin/users/${id}`, body, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
       setUsers((us) =>
         us.map((u) => (u._id === id ? { ...u, ...res.data } : u))
       );
@@ -72,70 +72,102 @@ export default function AdminManageUsers() {
   const handleChange = (e) =>
     setFormState({ ...formState, [e.target.name]: e.target.value });
 
+  const filteredUsers = users.filter(
+    (u) =>
+      u.name.toLowerCase().includes(search.toLowerCase()) ||
+      u.email.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Manage Users</h1>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white shadow rounded">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-2">Name</th>
-              <th className="p-2">Email</th>
-              <th className="p-2">Role</th>
-              <th className="p-2">Actions</th>
+      <h1 className="text-2xl font-semibold mb-4">Manage Users</h1>
+
+      {/* Search Bar */}
+      <input
+        type="text"
+        placeholder="Search by name or email..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="mb-4 px-3 py-2 border border-gray-300 rounded-md w-full max-w-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+      />
+
+      <div className="shadow-lg rounded-lg overflow-hidden">
+        <table className="w-full bg-white">
+          <thead className="bg-gradient-to-r from-cyan-100 to-blue-100 text-gray-700 font-semibold">
+            <tr>
+              <th className="p-3 text-left">Name</th>
+              <th className="p-3 text-left">Email</th>
+              <th className="p-3 text-left">Role</th>
+              <th className="p-3 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {users.map((u) => (
-              <tr key={u._id} className="border-t">
-                <td className="p-2">
+            {filteredUsers.length === 0 && (
+              <tr>
+                <td colSpan="4" className="text-center p-4 text-gray-500">
+                  No users found.
+                </td>
+              </tr>
+            )}
+
+            {filteredUsers.map((u) => (
+              <tr key={u._id} className="border-t transition hover:bg-gray-50 ">
+                <td className="p-3">
                   <input
                     name="name"
-                    value={
-                      editingId === u._id ? formState.name : u.name
-                    }
+                    value={editingId === u._id ? formState.name : u.name}
                     onChange={handleChange}
                     disabled={editingId !== u._id}
-                    className="w-full border rounded px-2 py-1"
+                    className={`w-full px-2 py-1 rounded-md transition ${
+                      editingId === u._id
+                        ? "border border-gray-300 bg-white"
+                        : "border-none bg-transparent"
+                    }`}
                   />
                 </td>
-                <td className="p-2">
+                <td className="p-3">
                   <input
                     name="email"
-                    value={
-                      editingId === u._id ? formState.email : u.email
-                    }
+                    value={editingId === u._id ? formState.email : u.email}
                     onChange={handleChange}
                     disabled={editingId !== u._id}
-                    className="w-full border rounded px-2 py-1"
+                    className={`w-full px-2 py-1 rounded-md transition ${
+                      editingId === u._id
+                        ? "border border-gray-300 bg-white"
+                        : "border-none bg-transparent"
+                    }`}
                   />
                 </td>
-                <td className="p-2">
+                <td className="p-3">
                   <select
                     name="role"
-                    value={
-                      editingId === u._id ? formState.role : u.role
-                    }
+                    value={editingId === u._id ? formState.role : u.role}
                     onChange={handleChange}
                     disabled={editingId !== u._id}
-                    className="w-full border rounded px-2 py-1"
+                    className={`w-full px-2 py-1 rounded-md transition ${
+                      editingId === u._id
+                        ? "border border-gray-300 bg-white cursor-pointer"
+                        : "border-none bg-transparent"
+                    }`}
                   >
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
                   </select>
                 </td>
-                <td className="p-2 flex gap-2">
+                <td className="p-3 flex justify-center gap-3 text-lg">
                   {editingId === u._id ? (
                     <>
                       <button
                         onClick={() => saveEdit(u._id)}
-                        className="text-green-600 hover:text-green-800"
+                        className="text-green-600 hover:text-green-800 transition cursor-pointer"
+                        title="Save"
                       >
                         💾
                       </button>
                       <button
                         onClick={cancelEdit}
-                        className="text-gray-500 hover:text-gray-800"
+                        className="text-gray-500 hover:text-gray-800 transition cursor-pointer"
+                        title="Cancel"
                       >
                         ✖️
                       </button>
@@ -144,28 +176,23 @@ export default function AdminManageUsers() {
                     <>
                       <button
                         onClick={() => startEdit(u)}
-                        className="text-blue-600 hover:text-blue-800"
+                        className="text-blue-600 hover:text-blue-800 transition cursor-pointer"
+                        title="Edit"
                       >
-                        ✏️
+                        < FaRegEdit size={18} />
                       </button>
                       <button
-                        onClick={() => deleteUser(u._id)}
-                        className="text-red-600 hover:text-red-800"
+                        onClick={() => deleteFile(f._id)}
+                        className="text-red-600 hover:text-red-800 cursor-pointer"
+                        title="Delete"
                       >
-                        🗑️
+                        <FiTrash2 />
                       </button>
                     </>
                   )}
                 </td>
               </tr>
             ))}
-            {users.length === 0 && (
-              <tr>
-                <td colSpan="4" className="p-4 text-center text-gray-500">
-                  No users found.
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
       </div>
