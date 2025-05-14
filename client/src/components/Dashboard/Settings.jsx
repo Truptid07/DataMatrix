@@ -17,7 +17,7 @@ const Settings = () => {
       try {
         const res = await axios.get(`${BASE_URL}/api/auth/me`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         });
         setFormData({ ...formData, name: res.data.name, email: res.data.email });
@@ -37,7 +37,7 @@ const Settings = () => {
     try {
       const res = await axios.put(`${BASE_URL}/api/auth/update`, formData, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
       });
       setMessage("Profile updated successfully!");

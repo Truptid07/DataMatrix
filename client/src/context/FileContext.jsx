@@ -34,6 +34,10 @@ export const FileProvider = ({ children }) => {
       setFileData(null);
       return;
     }
+    else if (selectedFileId === "local") {
+      selectedFileId === "local";
+      return;
+    }
     const fetchData = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/api/files/${selectedFileId}`, {
@@ -47,9 +51,24 @@ export const FileProvider = ({ children }) => {
     fetchData();
   }, [selectedFileId, token]);
 
+  const fetchFiles = async () => {
+  try {
+    const res = await axios.get(`${BASE_URL}/api/files`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setFiles(res.data);
+  } catch (err) {
+    console.error("Failed to fetch files", err);
+  }
+};
+
+useEffect(() => {
+  if (token) fetchFiles();
+}, [token]);
+
   return (
     <FileContext.Provider
-      value={{ files, selectedFileId, setSelectedFileId, fileData, setFileData }}
+      value={{ files, selectedFileId, setSelectedFileId, fileData, setFileData, fetchFiles, }}
     >
       {children}
     </FileContext.Provider>

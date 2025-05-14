@@ -14,6 +14,7 @@ import {
   Legend,
   Filler,
 } from "chart.js";
+import * as XLSX from "xlsx";
 import { FunnelController } from "chartjs-chart-funnel";
 import { motion } from "framer-motion";
 import FileSelector from "../Analyze/FileSelector";
@@ -24,6 +25,7 @@ import ThreeDChart from "../Analyze/ThreeDChart";
 import ThreeDChartSelector from "../Analyze/ThreeDChartSelector";
 import html2canvas from "html2canvas";
 import { useFilesContext } from "../../context/FileContext";
+import { useLocalFile } from "../../context/LocalFileContext";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -56,13 +58,28 @@ const fadeUp = {
 
 function Analyze() {
   const { token } = useSelector((state) => state.auth);
-  const { files, selectedFileId, setSelectedFileId, fileData, setFileData } = useFilesContext();
+  const {
+    files,
+    selectedFileId,
+    setSelectedFileId,
+    fileData,
+    setFileData,
+    fetchFiles,
+  } = useFilesContext();
   const [xAxis, setXAxis] = useState("");
   const [yAxis, setYAxis] = useState("");
   const [chartType, setChartType] = useState("none");
   const [selected3DChartType, setSelected3DChartType] = useState("none");
   const chartRef = useRef();
   const canvasRef = useRef(null);
+  const { localFile } = useLocalFile();
+  const [isSaved, setIsSaved] = useState(false);
+  const isLocalFile = selectedFileId === "local";
+
+
+  useEffect(() => {
+    fetchFiles(); // refetch files on component mount
+  }, []);
 
   const handle2DownloadChart = async () => {
     if (!chartRef.current) return;
@@ -84,6 +101,57 @@ function Analyze() {
     link.click();
   };
 
+  const handleSaveToDashboard = () => {
+    if (!fileData || !fileData.data || !fileData.fileName)
+      return alert("No local file to save.");
+
+    const worksheet = XLSX.utils.json_to_sheet(fileData.data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+
+    const blob = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    const formData = new FormData();
+    formData.append("file", blob, fileData.fileName);
+
+    axios
+      .post(`${BASE_URL}/api/files/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(async () => {
+        alert("✅ File saved to dashboard.");
+        await fetchFiles(); // ✅ refresh file list in context, no reload
+        setSelectedFileId(""); // reset selection
+        setIsSaved(true);
+      })
+      .catch((err) => {
+        console.error("Upload failed", err);
+        alert("❌ Failed to save file.");
+      });
+  };
+
+  useEffect(() => {
+    if (localFile) {
+      setFileData(localFile);
+      setSelectedFileId("local");
+      setXAxis("");
+      setYAxis("");
+      setChartType("none");
+      setSelected3DChartType("none");
+      setIsSaved(false);
+    }
+  }, [localFile]);
+
   useEffect(() => {
     if (!selectedFileId) {
       setFileData(null);
@@ -93,6 +161,19 @@ function Analyze() {
       setSelected3DChartType("none");
     }
   }, [selectedFileId]);
+
+  useEffect(() => {
+  const handleBeforeUnload = (e) => {
+    if (isLocalFile) {
+      e.preventDefault();
+      e.returnValue = ""; // triggers browser confirmation
+    }
+  };
+
+  window.addEventListener("beforeunload", handleBeforeUnload);
+  return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+}, [isLocalFile]);
+
 
   return (
     <motion.div
@@ -113,8 +194,25 @@ function Analyze() {
           files={files}
           selectedFileId={selectedFileId}
           setSelectedFileId={setSelectedFileId}
+          isLocal={!!localFile}
         />
       </motion.div>
+
+      {selectedFileId === "local" && (
+        <motion.div variants={fadeUp} custom={4.5}>
+          <button
+            onClick={handleSaveToDashboard}
+            disabled={isSaved}
+            className={`mb-4 px-4 py-2 rounded text-white transition ${
+              isSaved
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-green-600 hover:bg-green-700"
+            }`}
+          >
+            {isSaved ? "✔️ Saved" : "Save to Dashboard"}
+          </button>
+        </motion.div>
+      )}
 
       {fileData && (
         <>

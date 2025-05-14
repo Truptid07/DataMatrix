@@ -6,11 +6,12 @@ import ChartTypeSelector from "../Analyze/ChartTypeSelector";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import { motion } from "framer-motion";
+import { useLocalFile } from "../../context/LocalFileContext";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const AIInsights = () => {
-  const { files, selectedFileId, setSelectedFileId, fileData } =
+  const { files, selectedFileId, setSelectedFileId, fileData, fetchFiles } =
     useFilesContext();
 
   const [xAxis, setXAxis] = useState("");
@@ -25,10 +26,17 @@ const AIInsights = () => {
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [email, setEmail] = useState("");
   const [shareId, setShareId] = useState("");
+  const { localFile } = useLocalFile();
 
   useEffect(() => {
-    if (fileData && fileData.data?.length) {
-      setAvailableColumns(fileData.headers);
+    fetchFiles(); // refetch files on component mount
+  }, []);
+
+  useEffect(() => {
+    const activeFile = selectedFileId === "local" ? localFile : fileData;
+
+    if (activeFile?.data?.length) {
+      setAvailableColumns(activeFile.headers);
       setXAxis("");
       setYAxis("");
       setChartType("none");
@@ -37,26 +45,28 @@ const AIInsights = () => {
     } else {
       setAvailableColumns([]);
     }
-  }, [fileData]);
+  }, [fileData, localFile, selectedFileId]);
 
   useEffect(() => {
-    if (fileData && xAxis && yAxis) {
-      const fileName = fileData.fileName;
-      const headers = availableColumns;
-      const data = fileData.data.map((row) => ({
+    const activeFile = selectedFileId === "local" ? localFile : fileData;
+
+    if (activeFile && xAxis && yAxis) {
+      const fileName = activeFile.fileName;
+      const headers = activeFile.headers;
+      const data = activeFile.data.map((row) => ({
         [xAxis]: row[xAxis],
         [yAxis]: row[yAxis],
       }));
       setPayload({ fileName, headers, xAxis, yAxis, data });
     }
-  }, [fileData, xAxis, yAxis, availableColumns]);
+  }, [fileData, localFile, xAxis, yAxis, selectedFileId]);
 
   const handleGenerateInsights = async () => {
     setLoading(true);
     setError("");
     try {
       const res = await axios.post(`${BASE_URL}/api/insights`, payload, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       });
       setInsights(res.data);
     } catch (err) {
@@ -106,7 +116,7 @@ const AIInsights = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         }
       );
@@ -132,7 +142,7 @@ const AIInsights = () => {
         { email, shareId },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         }
       );
@@ -161,6 +171,7 @@ const AIInsights = () => {
           onChange={(e) => setSelectedFileId(e.target.value)}
         >
           <option value="">-- Choose File --</option>
+          <option value="local">(Local) {localFile.fileName}</option>
           {files.map((f) => (
             <option key={f._id} value={f._id}>
               {f.fileName}

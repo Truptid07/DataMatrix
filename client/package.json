@@ -15,6 +15,7 @@
     "axios": "^1.9.0",
     "chart.js": "^4.4.9",
     "chartjs-chart-funnel": "^4.2.4",
+    "crypto-js": "^4.2.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^12.11.0",
     "html2canvas": "^1.4.1",
