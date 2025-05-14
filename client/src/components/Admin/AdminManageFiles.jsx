@@ -104,17 +104,6 @@ export default function AdminManageFiles() {
           onChange={(e) => setSearch(e.target.value)}
           className="px-3 py-2 border border-gray-300 rounded-md w-full sm:max-w-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
         />
-
-        <select
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-md w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-sky-400 cursor-pointer"
-        >
-          <option value="">All Roles</option>
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
-        </select>
-
         <button
           onClick={resetFilters}
           className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition w-full sm:w-auto cursor-pointer"
@@ -151,7 +140,7 @@ export default function AdminManageFiles() {
                   {new Date(f.createdAt).toLocaleString()}
                 </td>
                 <td className="p-3 flex justify-center gap-4 text-lg">
-                  <button
+                  {/* <button
                     onClick={() => viewFile(f._id)}
                     className="text-blue-600 hover:text-blue-800 cursor-pointer"
                     title="View"
@@ -164,7 +153,7 @@ export default function AdminManageFiles() {
                     title="Download"
                   >
                     <FiDownload />
-                  </button>
+                  </button> */}
                   <button
                     onClick={() => deleteFile(f._id)}
                     className="text-red-600 hover:text-red-800 cursor-pointer"

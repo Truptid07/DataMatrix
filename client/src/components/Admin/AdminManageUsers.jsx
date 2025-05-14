@@ -12,6 +12,9 @@ export default function AdminManageUsers() {
   const [formState, setFormState] = useState({});
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
+  const [roleFilter, setRoleFilter] = useState("");
+  const [page, setPage] = useState(1);
+  const filesPerPage = 5;
 
   const fetchUsers = async () => {
     try {
@@ -72,24 +75,57 @@ export default function AdminManageUsers() {
   const handleChange = (e) =>
     setFormState({ ...formState, [e.target.name]: e.target.value });
 
-  const filteredUsers = users.filter(
-    (u) =>
+  const filteredUsers = users.filter((u) => {
+    const matchesSearch =
       u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase())
+      u.email.toLowerCase().includes(search.toLowerCase());
+
+    const matchesRole = roleFilter ? u.role === roleFilter : true;
+
+    return matchesSearch && matchesRole;
+  });
+
+  const totalPages = Math.ceil(filteredUsers.length / filesPerPage);
+  const paginatedUsers = filteredUsers.slice(
+    (page - 1) * filesPerPage,
+    page * filesPerPage
   );
+
+  const resetFilters = () => {
+    setSearch("");
+    setRoleFilter("");
+    setPage(1);
+  };
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-semibold mb-4">Manage Users</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+        {/* Search Bar */}
+        <input
+          type="text"
+          placeholder="Search by name or email..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="mb-4 px-3 py-2 border border-gray-300 rounded-md w-full max-w-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+        />
+        <select
+          value={roleFilter}
+          onChange={(e) => setRoleFilter(e.target.value)}
+          className="px-3 py-2 border border-gray-300 rounded-md w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-sky-400 cursor-pointer"
+        >
+          <option value="">All Roles</option>
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
 
-      {/* Search Bar */}
-      <input
-        type="text"
-        placeholder="Search by name or email..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="mb-4 px-3 py-2 border border-gray-300 rounded-md w-full max-w-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
-      />
+        <button
+          onClick={resetFilters}
+          className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition w-full sm:w-auto cursor-pointer"
+        >
+          Clear Filters
+        </button>
+      </div>
 
       <div className="shadow-lg rounded-lg overflow-hidden">
         <table className="w-full bg-white">
@@ -102,7 +138,7 @@ export default function AdminManageUsers() {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.length === 0 && (
+            {paginatedUsers.length === 0 && (
               <tr>
                 <td colSpan="4" className="text-center p-4 text-gray-500">
                   No users found.
@@ -179,10 +215,10 @@ export default function AdminManageUsers() {
                         className="text-blue-600 hover:text-blue-800 transition cursor-pointer"
                         title="Edit"
                       >
-                        < FaRegEdit size={18} />
+                        <FaRegEdit size={18} />
                       </button>
                       <button
-                        onClick={() => deleteFile(f._id)}
+                        onClick={() => deleteUser(u._id)}
                         className="text-red-600 hover:text-red-800 cursor-pointer"
                         title="Delete"
                       >
@@ -195,6 +231,25 @@ export default function AdminManageUsers() {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="flex justify-center items-center mt-4 gap-2">
+        <button
+          onClick={() => setPage((p) => Math.max(p - 1, 1))}
+          disabled={page === 1}
+          className="px-3 py-1 border rounded disabled:opacity-50"
+        >
+          Prev
+        </button>
+        <span className="px-2 font-medium">
+          Page {page} of {totalPages}
+        </span>
+        <button
+          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+          disabled={page === totalPages}
+          className="px-3 py-1 border rounded disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
     </div>
   );

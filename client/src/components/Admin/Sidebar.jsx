@@ -107,7 +107,7 @@ function Sidebar() {
                 className="flex items-center gap-3 mb-8"
               >
                 <img
-                  src="/logo.png"
+                  src="./logo.png"
                   alt="SheetSense Logo"
                   className="w-10 h-10"
                 />
