@@ -66,7 +66,7 @@ const AIInsights = () => {
     setError("");
     try {
       const res = await axios.post(`${BASE_URL}/api/insights`, payload, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       });
       setInsights(res.data);
     } catch (err) {
@@ -116,7 +116,7 @@ const AIInsights = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         }
       );
@@ -142,7 +142,7 @@ const AIInsights = () => {
         { email, shareId },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         }
       );

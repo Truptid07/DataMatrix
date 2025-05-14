@@ -1,7 +1,11 @@
 import "./App.css";
+import React, { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import ProtectedRoute from "./ProtectedRoute";
-import AdminRoute from "./AdminRoute";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "./redux/authSlice";
+import ProtectedRoute from "./protection/ProtectedRoute";
+import AdminRoute from "./protection/AdminRoute";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
@@ -19,6 +23,19 @@ import AdminManageFiles from "./components/Admin/AdminManageFiles";
 import AdminSettings from "./components/Admin/AdminSettings";
 
 function App() {
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    const user = sessionStorage.getItem("user");
+    if (token && user) {
+      dispatch(setCredentials({ token, user: JSON.parse(user) }));
+    }
+    setIsLoading(false);
+  }, []);
+
+  if (isLoading) return null; // Or show a spinner
   return (
     <BrowserRouter>
       <Routes>

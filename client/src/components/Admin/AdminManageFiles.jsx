@@ -16,7 +16,7 @@ export default function AdminManageFiles() {
   const fetchFiles = async () => {
     try {
       const { data } = await axios.get(`${BASE_URL}/api/admin/files`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       });
       setFiles(data);
     } catch (err) {
@@ -32,7 +32,7 @@ export default function AdminManageFiles() {
   const viewFile = async (id) => {
     try {
       const { data } = await axios.get(`${BASE_URL}/api/admin/files/${id}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       });
       setModalFile(data);
     } catch (err) {
@@ -45,7 +45,7 @@ export default function AdminManageFiles() {
     if (!window.confirm("Delete this file?")) return;
     try {
       await axios.delete(`${BASE_URL}/api/admin/files/${id}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       });
       setFiles((f) => f.filter((x) => x._id !== id));
     } catch (err) {
@@ -58,7 +58,7 @@ export default function AdminManageFiles() {
     try {
       const res = await axios.get(`${BASE_URL}/api/files/download/${id}`, {
         responseType: "blob",
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       });
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const a = document.createElement("a");

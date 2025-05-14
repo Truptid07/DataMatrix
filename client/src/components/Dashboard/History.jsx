@@ -10,7 +10,7 @@ const History = () => {
   const [selectedFileContent, setSelectedFileContent] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
     const fetchFiles = async () => {

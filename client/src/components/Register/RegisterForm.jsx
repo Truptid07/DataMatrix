@@ -31,7 +31,7 @@ function RegisterForm() {
       setTimeout(async () => {
         const data = await registerUser(formData);
         dispatch(setCredentials(data));
-        localStorage.setItem("token", data.token);
+        sessionStorage.setItem("token", data.token);
         if (data.user.role === "admin") {
           navigate("/admin");
         } else {

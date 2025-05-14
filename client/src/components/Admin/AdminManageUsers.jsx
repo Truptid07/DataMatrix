@@ -19,7 +19,7 @@ export default function AdminManageUsers() {
   const fetchUsers = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/users`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       });
       setUsers(res.data);
     } catch (err) {
@@ -47,7 +47,7 @@ export default function AdminManageUsers() {
       const body = { ...formState };
       if (!body.password) delete body.password;
       const res = await axios.put(`${BASE_URL}/api/admin/users/${id}`, body, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       });
       setUsers((us) =>
         us.map((u) => (u._id === id ? { ...u, ...res.data } : u))
@@ -63,7 +63,7 @@ export default function AdminManageUsers() {
     if (!window.confirm("Delete this user?")) return;
     try {
       await axios.delete(`${BASE_URL}/api/admin/users/${id}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       });
       setUsers((us) => us.filter((u) => u._id !== id));
     } catch (err) {
