@@ -5,8 +5,9 @@ import AxisSelector from "../Analyze/AxisSelector";
 import ChartTypeSelector from "../Analyze/ChartTypeSelector";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useLocalFile } from "../../context/LocalFileContext";
+import { FiCopy } from "react-icons/fi";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -27,6 +28,8 @@ const AIInsights = () => {
   const [email, setEmail] = useState("");
   const [shareId, setShareId] = useState("");
   const { localFile } = useLocalFile();
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
 
   useEffect(() => {
     fetchFiles(); // refetch files on component mount
@@ -61,7 +64,15 @@ const AIInsights = () => {
     }
   }, [fileData, localFile, xAxis, yAxis, selectedFileId]);
 
-  const handleGenerateInsights = async () => {
+  const handleGenerateInsights = () => {
+    if (!confirmed) {
+      setShowConfirmModal(true); // show modal
+      return;
+    }
+    generateInsights(); // actual API call
+  };
+
+  const generateInsights = async () => {
     setLoading(true);
     setError("");
     try {
@@ -73,6 +84,7 @@ const AIInsights = () => {
       setError("Failed to fetch insights. Please try again.");
     } finally {
       setLoading(false);
+      setConfirmed(false); // reset for next time
     }
   };
 
@@ -161,6 +173,52 @@ const AIInsights = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
+      <AnimatePresence>
+        {showConfirmModal && (
+          <motion.div
+            className="fixed inset-0 backdrop-blur-md z-50 flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h2 className="text-lg font-semibold mb-4 text-red-600">
+                ⚠️ Data Privacy Warning
+              </h2>
+              <p className="text-gray-700 mb-4">
+                By proceeding, you agree to share your selected data with our AI
+                service (Gemini/OpenAI) to generate insights. Sensitive or
+                personal data may be analyzed.
+              </p>
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => setShowConfirmModal(false)}
+                  className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    setShowConfirmModal(false);
+                    setConfirmed(true);
+                    handleGenerateInsights(); // re-trigger
+                  }}
+                  className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+                >
+                  Proceed
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <h2 className="text-2xl font-bold mb-6 text-blue-800">🧠 AI Insights</h2>
 
       <div className="mb-4 animate-fade-in-up">
@@ -171,7 +229,10 @@ const AIInsights = () => {
           onChange={(e) => setSelectedFileId(e.target.value)}
         >
           <option value="">-- Choose File --</option>
-          <option value="local">(Local) {localFile.fileName}</option>
+          {localFile?.fileName && (
+            <option value="local">(Local) {localFile.fileName}</option>
+          )}
+
           {files.map((f) => (
             <option key={f._id} value={f._id}>
               {f.fileName}
@@ -290,9 +351,9 @@ const AIInsights = () => {
                     onClick={() =>
                       handleCopy(`${insight.type}: ${insight.text}`)
                     }
-                    className="text-sm text-blue-500 hover:underline"
+                    className="text-blue-500 hover:text-blue-700"
                   >
-                    Copy
+                    <FiCopy className="w-5 h-5" />
                   </button>
                 </div>
                 <p className="text-gray-700">{insight.text}</p>

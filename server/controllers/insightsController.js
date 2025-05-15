@@ -9,20 +9,25 @@ export const getInsights = async (req, res) => {
     const { fileName, headers, xAxis, yAxis, data } = req.body;
 
     const userPrompt = `
-You are a data analyst. 
-Given the dataset "${fileName}", with X axis "${xAxis}" and Y axis "${yAxis}", and data:
+You are a highly skilled data analyst.
+Analyze the dataset titled "${fileName}" with X-axis "${xAxis}" and Y-axis "${yAxis}". Here is the data:
 ${JSON.stringify(data, null, 2)}
-Provide:
-1. A brief summary of the trend.
-2. Any anomalies or outliers.
-3. A short actionable insight.
-Reply as a JSON array of objects like:
+
+Perform the following tasks:
+1. Identify and summarize any clear patterns or trends in the relationship between "${xAxis}" and "${yAxis}".
+2. Detect and describe any anomalies or outliers that significantly deviate from the pattern.
+3. Provide a concise and practical actionable insight based on the observed trend and data behavior.
+
+Return your response strictly as a JSON array with objects in this format:
 [
-  { "type": "Trend", "text": "…" },
-  { "type": "Anomaly", "text": "…" },
-  { "type": "Actionable Insight", "text": "…" }
+  { "type": "Trend", "text": "<summary of the observed trend>" },
+  { "type": "Anomaly", "text": "<description of any anomalies or outliers>" },
+  { "type": "Actionable Insight", "text": "<concise recommendation or action>" }
 ]
+
+Keep each response objective, insightful, and based on observable patterns in the data.
 `;
+
 
     // Generate text with Gemini 2.0 Flash
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
