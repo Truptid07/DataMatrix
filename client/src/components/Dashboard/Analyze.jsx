@@ -26,6 +26,7 @@ import ThreeDChartSelector from "../Analyze/ThreeDChartSelector";
 import html2canvas from "html2canvas";
 import { useFilesContext } from "../../context/FileContext";
 import { useLocalFile } from "../../context/LocalFileContext";
+import All2DChartsGrid from "../Analyze/All2DChartsGrid";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -75,7 +76,7 @@ function Analyze() {
   const { localFile } = useLocalFile();
   const [isSaved, setIsSaved] = useState(false);
   const isLocalFile = selectedFileId === "local";
-
+  const [showAll2D, setShowAll2D] = useState(false);
 
   useEffect(() => {
     fetchFiles(); // refetch files on component mount
@@ -163,17 +164,16 @@ function Analyze() {
   }, [selectedFileId]);
 
   useEffect(() => {
-  const handleBeforeUnload = (e) => {
-    if (isLocalFile) {
-      e.preventDefault();
-      e.returnValue = ""; // triggers browser confirmation
-    }
-  };
+    const handleBeforeUnload = (e) => {
+      if (isLocalFile) {
+        e.preventDefault();
+        e.returnValue = ""; // triggers browser confirmation
+      }
+    };
 
-  window.addEventListener("beforeunload", handleBeforeUnload);
-  return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-}, [isLocalFile]);
-
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isLocalFile]);
 
   return (
     <motion.div
@@ -232,6 +232,27 @@ function Analyze() {
               setChartType={setChartType}
             />
           </motion.div>
+
+          {fileData && xAxis && yAxis && (
+            <motion.div variants={fadeUp} custom={5} className="mt-4">
+              <button
+                onClick={() => setShowAll2D((prev) => !prev)}
+                className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+              >
+                {showAll2D ? "Hide All Charts" : "Show All Charts"}
+              </button>
+            </motion.div>
+          )}
+
+          {showAll2D && xAxis && yAxis && (
+            <motion.div variants={fadeUp} custom={6} className="mt-6">
+              <All2DChartsGrid
+                fileData={fileData}
+                xAxis={xAxis}
+                yAxis={yAxis}
+              />
+            </motion.div>
+          )}
 
           {chartType !== "none" && xAxis && yAxis && (
             <motion.div variants={fadeUp} custom={5}>
