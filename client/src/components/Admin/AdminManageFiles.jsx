@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { fadeInUp } from "../animations/fadeInUp";
 
 import SearchFilters from "../adminmanagefiles/SearchFilters";
 import FileTable from "../adminmanagefiles/FileTable";
@@ -80,18 +81,44 @@ export default function AdminManageFiles() {
     return matchSearch && matchRole;
   });
 
-  const paginated = filtered.slice((page - 1) * filesPerPage, page * filesPerPage);
+  const paginated = filtered.slice(
+    (page - 1) * filesPerPage,
+    page * filesPerPage
+  );
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-4">Manage Files</h1>
-      <SearchFilters search={search} setSearch={setSearch} resetFilters={() => {
-        setSearch(""); setRoleFilter(""); setPage(1);
-      }} />
+      <motion.h1
+        custom={0}
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        className="text-2xl font-semibold mb-4"
+      >
+        Manage Files
+      </motion.h1>
+      <SearchFilters
+        search={search}
+        setSearch={setSearch}
+        resetFilters={() => {
+          setSearch("");
+          setRoleFilter("");
+          setPage(1);
+        }}
+      />
       <div className="shadow-lg rounded-lg overflow-hidden">
-        <FileTable files={paginated} viewFile={viewFile} deleteFile={deleteFile} downloadFile={downloadFile} />
+        <FileTable
+          files={paginated}
+          viewFile={viewFile}
+          deleteFile={deleteFile}
+          downloadFile={downloadFile}
+        />
       </div>
-      <Pagination page={page} setPage={setPage} totalPages={Math.ceil(filtered.length / filesPerPage)} />
+      <Pagination
+        page={page}
+        setPage={setPage}
+        totalPages={Math.ceil(filtered.length / filesPerPage)}
+      />
       <AnimatePresence>
         <FileModal modalFile={modalFile} onClose={() => setModalFile(null)} />
       </AnimatePresence>

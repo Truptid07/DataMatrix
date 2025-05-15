@@ -1,8 +1,15 @@
 import { motion } from "framer-motion";
+import { fadeInUp } from "../animations/fadeInUp";
 
 function SelectedFileDisplay({ fileName, onRemove }) {
   return (
-    <motion.div className="relative bg-white border rounded-lg p-3 mb-4 flex items-center justify-between shadow-sm">
+    <motion.div
+      custom={0.1}
+      initial="hidden"
+      animate="visible"
+      variants={fadeInUp}
+      className="relative bg-white border rounded-lg p-3 mb-4 flex items-center justify-between shadow-sm"
+    >
       <span className="text-sm text-[#2E3C43] truncate max-w-[85%]">
         {fileName}
       </span>
@@ -16,7 +23,7 @@ function SelectedFileDisplay({ fileName, onRemove }) {
         whileHover={{ scale: 1.2 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
       >
-        ×
+        ❌
       </motion.button>
     </motion.div>
   );

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import FileTable from "../userhistory/FileTable";
 import FileModal from "../userhistory/FileModal";
+import { motion } from "framer-motion";
+import { fadeInUp } from "../animations/fadeInUp";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -74,11 +76,21 @@ const History = () => {
 
   return (
     <div className="p-4 md:p-8 bg-[#f0f8ff] min-h-screen">
-      <h2 className="text-2xl font-bold text-blue-800 mb-6 animate-fade-in-up">
+      <motion.h2
+        custom={0}
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        className="text-2xl font-bold text-blue-800 mb-6 animate-fade-in-up"
+      >
         📁 Uploaded Files
-      </h2>
+      </motion.h2>
 
       <FileTable
+        custom={0.2}
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
         files={files}
         onView={handleView}
         onDownload={handleDownload}
@@ -86,7 +98,14 @@ const History = () => {
       />
 
       {showModal && (
-        <FileModal content={selectedFileContent} onClose={() => setShowModal(false)} />
+        <FileModal
+          custom={0.4}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          content={selectedFileContent}
+          onClose={() => setShowModal(false)}
+        />
       )}
     </div>
   );

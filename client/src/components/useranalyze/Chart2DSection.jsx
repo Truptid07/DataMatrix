@@ -3,6 +3,7 @@ import ChartRenderer from "./ChartRenderer";
 import All2DChartsGrid from "./All2DChartsGrid";
 import { Download2DChartButton } from "./ChartDownloadButtons";
 import "./chartjs-setup";
+import { fadeInUp } from "../animations/fadeInUp";
 
 export default function Chart2DSection({
   fileData,
@@ -17,7 +18,13 @@ export default function Chart2DSection({
   return (
     <>
       {fileData && xAxis && yAxis && (
-        <motion.div variants={fadeUp} custom={5} className="mt-4">
+        <motion.div
+          custom={0.2}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          className="mt-4"
+        >
           <button
             onClick={() => setShowAll2D((prev) => !prev)}
             className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
@@ -28,13 +35,13 @@ export default function Chart2DSection({
       )}
 
       {showAll2D && xAxis && yAxis && (
-        <motion.div variants={fadeUp} custom={6} className="mt-6">
+        <motion.div variants={fadeUp} custom={0.4} className="mt-6">
           <All2DChartsGrid fileData={fileData} xAxis={xAxis} yAxis={yAxis} />
         </motion.div>
       )}
 
       {chartType !== "none" && xAxis && yAxis && (
-        <motion.div variants={fadeUp} custom={5}>
+        <motion.div variants={fadeUp} custom={0.4}>
           <div
             className="bg-white p-4 sm:p-6 rounded shadow mb-6 overflow-x-auto"
             ref={chartRef}

@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import ThreeDChart from "./ThreeDChart";
 import ThreeDChartSelector from "./ThreeDChartSelector";
 import { Download3DChartButton } from "./ChartDownloadButtons";
+import { fadeInUp } from "../animations/fadeInUp";
 
 export default function Chart3DSection({
   fileData,
@@ -14,8 +15,8 @@ export default function Chart3DSection({
 }) {
   return (
     <motion.section
-      variants={fadeUp}
-      custom={6}
+      variants={fadeInUp}
+      custom={0.2}
       className="mt-6 bg-white shadow-md rounded-lg p-4 space-y-4"
     >
       <h2 className="text-lg font-semibold text-gray-800">3D Chart Options</h2>

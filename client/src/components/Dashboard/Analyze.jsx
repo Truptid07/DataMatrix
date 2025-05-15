@@ -3,24 +3,12 @@ import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { useFilesContext } from "../../context/FileContext";
 import { useLocalFile } from "../../context/LocalFileContext";
+import { fadeInUp } from "../animations/fadeInUp";
 
 import FileAndAxisSelectors from "../useranalyze/FileAndAxisSelectors";
 import SaveToDashboardButton from "../useranalyze/SaveToDashboardButton";
 import Chart2DSection from "../useranalyze/Chart2DSection";
 import Chart3DSection from "../useranalyze/Chart3DSection";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i = 1) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.15,
-      duration: 0.6,
-      ease: "easeOut",
-    },
-  }),
-};
 
 function Analyze() {
   const { token } = useSelector((state) => state.auth);
@@ -83,11 +71,18 @@ function Analyze() {
   }, [isLocalFile]);
 
   return (
-    <motion.div className="p-4 sm:p-6 lg:p-10" initial="hidden" animate="visible">
+    <motion.div
+      className="p-4 sm:p-6 lg:p-10"
+      initial="hidden"
+      animate="visible"
+      variants={fadeInUp}
+    >
       <motion.h1
         className="text-2xl font-bold mb-6 text-[#2E3C43]"
-        variants={fadeUp}
-        custom={1}
+        custom={0.1}
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
       >
         Analyze Your Data
       </motion.h1>
@@ -104,11 +99,11 @@ function Analyze() {
         setYAxis={setYAxis}
         chartType={chartType}
         setChartType={setChartType}
-        fadeUp={fadeUp}
+        fadeUp={fadeInUp}
       />
 
       {selectedFileId === "local" && (
-        <motion.div variants={fadeUp} custom={4.5}>
+        <motion.div variants={fadeInUp} custom={0.4}>
           <SaveToDashboardButton
             localFile={localFile}
             setFileData={setFileData}
@@ -130,7 +125,7 @@ function Analyze() {
             showAll2D={showAll2D}
             setShowAll2D={setShowAll2D}
             chartRef={chartRef}
-            fadeUp={fadeUp}
+            fadeUp={fadeInUp}
           />
 
           <Chart3DSection
@@ -140,7 +135,7 @@ function Analyze() {
             selected3DChartType={selected3DChartType}
             setSelected3DChartType={setSelected3DChartType}
             canvasRef={canvasRef}
-            fadeUp={fadeUp}
+            fadeUp={fadeInUp}
           />
         </>
       )}

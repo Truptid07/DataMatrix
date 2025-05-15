@@ -5,6 +5,7 @@ import { useLocalFile } from "../../context/LocalFileContext";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import { motion, AnimatePresence } from "framer-motion";
+import { fadeInUp } from "../animations/fadeInUp";
 
 import FileSelector from "../useraiinsighs/FileSelector";
 import InsightControls from "../useraiinsighs/InsightControls";
@@ -16,7 +17,8 @@ import ConfirmModal from "../useraiinsighs/ConfirmModal";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const AIInsights = () => {
-  const { files, selectedFileId, setSelectedFileId, fileData, fetchFiles } = useFilesContext();
+  const { files, selectedFileId, setSelectedFileId, fileData, fetchFiles } =
+    useFilesContext();
   const { localFile } = useLocalFile();
 
   const [xAxis, setXAxis] = useState("");
@@ -192,6 +194,10 @@ const AIInsights = () => {
 
       {availableColumns.length > 0 && (
         <InsightControls
+          custom={0.2}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
           availableColumns={availableColumns}
           xAxis={xAxis}
           yAxis={yAxis}
@@ -224,7 +230,12 @@ const AIInsights = () => {
           {shareLink && (
             <p className="mt-4 text-green-700 break-all">
               Share Link:{" "}
-              <a href={shareLink} target="_blank" rel="noreferrer" className="underline">
+              <a
+                href={shareLink}
+                target="_blank"
+                rel="noreferrer"
+                className="underline"
+              >
                 {shareLink}
               </a>
             </p>

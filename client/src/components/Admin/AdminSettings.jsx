@@ -2,20 +2,32 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ProfileForm from "../adminsettings/ProfileForm";
 import Message from "../adminsettings/Message";
+import { motion } from "framer-motion";
+import { fadeInUp } from "../animations/fadeInUp";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const AdminSettings = () => {
-  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
   const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/api/auth/me`, {
-          headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
         });
-        setFormData((prev) => ({ ...prev, name: res.data.name, email: res.data.email }));
+        setFormData((prev) => ({
+          ...prev,
+          name: res.data.name,
+          email: res.data.email,
+        }));
       } catch (err) {
         console.error(err);
       }
@@ -43,11 +55,29 @@ const AdminSettings = () => {
 
   return (
     <div className="p-6 flex justify-center items-center min-h-screen bg-gradient-to-br from-[#dff1fd] to-[#b3dcf3]">
-      <div className="w-full max-w-md bg-white/70 backdrop-blur-md rounded-2xl shadow-2xl p-8">
-        <h2 className="text-2xl font-semibold text-center text-[#2E3C43] mb-6">Update Profile</h2>
+      <motion.div
+        custom={0}
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        className="w-full max-w-md bg-white/70 backdrop-blur-md rounded-2xl shadow-2xl p-8"
+      >
+        <motion.h2
+          custom={0.2}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          className="text-2xl font-semibold text-center text-[#2E3C43] mb-6"
+        >
+          Update Profile
+        </motion.h2>
         <Message message={message} />
-        <ProfileForm formData={formData} handleChange={handleChange} handleSubmit={handleSubmit} />
-      </div>
+        <ProfileForm
+          formData={formData}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+        />
+      </motion.div>
     </div>
   );
 };
