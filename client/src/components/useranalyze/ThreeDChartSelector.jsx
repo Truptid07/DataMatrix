@@ -1,4 +1,3 @@
-// components/ThreeDChartSelector.jsx
 import React from 'react';
 
 const ThreeDChartSelector = ({ selected3DChartType, setSelected3DChartType }) => {
