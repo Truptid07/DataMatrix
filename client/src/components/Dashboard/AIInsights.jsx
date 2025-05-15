@@ -54,79 +54,127 @@ const AIInsights = () => {
 
   useEffect(() => {
     const activeFile = selectedFileId === "local" ? localFile : fileData;
-    setPayload(activeFile);
-  }, [selectedFileId, fileData, localFile]);
+    if (activeFile) {
+      setPayload({
+        fileId: selectedFileId,
+        data: activeFile.data,
+        headers: activeFile.headers,
+        xAxis,
+        yAxis,
+        chartType,
+      });
+    }
+  }, [selectedFileId, fileData, localFile, xAxis, yAxis, chartType]);
 
-  const generateInsights = () => {
+  const handleGenerateInsights = () => {
     if (!confirmed) {
       setShowConfirmModal(true);
       return;
     }
+    generateInsights();
+  };
+
+  const generateInsights = async () => {
     if (!payload) return;
     setLoading(true);
     setError("");
-    axios
-      .post(`${BASE_URL}/ai/insights`, {
-        fileId: selectedFileId,
-        data: payload.data,
-        headers: payload.headers,
-        xAxis,
-        yAxis,
-        chartType,
-      })
-      .then((res) => {
-        setInsights(res.data.insights);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError("Failed to generate insights.");
-        setLoading(false);
+    try {
+      const res = await axios.post(`${BASE_URL}/api/insights`, payload, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
       });
+      setInsights(res.data);
+    } catch {
+      setError("Failed to fetch insights. Please try again.");
+    } finally {
+      setLoading(false);
+      setConfirmed(false);
+    }
   };
 
-  const onExportTxt = () => {
-    if (!insights.length) return;
-    const txt = insights.map((i) => `${i.type}: ${i.text}`).join("\n\n");
-    const blob = new Blob([txt], { type: "text/plain;charset=utf-8" });
+  const handleCopy = (text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      alert("Copied to clipboard!");
+    });
+  };
+
+  const handleExportTxt = () => {
+    const blob = new Blob(
+      [insights.map((i) => `${i.type}: ${i.text}`).join("\n\n")],
+      { type: "text/plain;charset=utf-8" }
+    );
     saveAs(blob, "insights.txt");
   };
 
-  const onExportPdf = () => {
-    if (!insights.length) return;
+  const handleExportPdf = () => {
     const doc = new jsPDF();
-    insights.forEach((insight, idx) => {
-      doc.text(`${insight.type}: ${insight.text}`, 10, 10 + idx * 20);
+    let y = 10;
+    insights.forEach((insight) => {
+      doc.text(`${insight.type}:`, 10, y);
+      y += 7;
+      const lines = doc.splitTextToSize(insight.text, 180);
+      doc.text(lines, 10, y);
+      y += lines.length * 7 + 5;
     });
     doc.save("insights.pdf");
   };
 
-  const onShareLink = () => {
-    if (!insights.length) return;
-    axios
-      .post(`${BASE_URL}/ai/share`, { insights })
-      .then((res) => {
-        setShareId(res.data.shareId);
-        setShareLink(`${window.location.origin}/shared/${res.data.shareId}`);
-      })
-      .catch(() => setError("Failed to create share link."));
+  const handleShare = async () => {
+    if (!insights.length) return alert("Generate insights first!");
+    setLoading(true);
+    setError("");
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/api/insights/share`,
+        {
+          fileName: fileData.fileName,
+          insights: insights,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+        }
+      );
+      const link = res.data.url;
+      setShareLink(link);
+      const id = link.split("/").pop();
+      setShareId(id);
+      await navigator.clipboard.writeText(link);
+      alert("Link copied to clipboard!");
+    } catch (err) {
+      setError("Failed to generate share link. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const onSendEmail = () => {
-    if (!email || !shareId) return;
-    axios
-      .post(`${BASE_URL}/ai/email`, { email, shareId })
-      .then(() => alert("Email sent!"))
-      .catch(() => alert("Failed to send email."));
-  };
-
-  const onCopyInsight = (text) => {
-    navigator.clipboard.writeText(text);
+  const handleEmailShare = async () => {
+    if (!email || !shareId)
+      return alert("Please share first, then enter a valid email.");
+    try {
+      await axios.post(
+        `${BASE_URL}/api/insights/email`,
+        { email, shareId },
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+        }
+      );
+      alert("Email sent successfully!");
+      setEmail("");
+      setShowEmailInput(false);
+    } catch {
+      alert("Failed to send email.");
+    }
   };
 
   const handleProceed = () => {
     setConfirmed(true);
     setShowConfirmModal(false);
-    generateInsights();
+    handleGenerateInsights();
   };
 
   const handleCancel = () => {
@@ -134,61 +182,64 @@ const AIInsights = () => {
   };
 
   return (
-  <div className="container mx-auto p-4 max-w-5xl">
-    <FileSelector
-      files={files}
-      localFile={localFile}
-      selectedFileId={selectedFileId}
-      setSelectedFileId={setSelectedFileId}
-    />
-
-    {availableColumns.length > 0 && (
-      <InsightControls
-        availableColumns={availableColumns}
-        xAxis={xAxis}
-        yAxis={yAxis}
-        setXAxis={setXAxis}
-        setYAxis={setYAxis}
-        chartType={chartType}
-        setChartType={setChartType}
-        onGenerate={generateInsights}
-        loading={loading}
+    <div className="container mx-auto p-4 max-w-5xl">
+      <FileSelector
+        files={files}
+        localFile={localFile}
+        selectedFileId={selectedFileId}
+        setSelectedFileId={setSelectedFileId}
       />
-    )}
 
-    {error && <p className="text-red-600 mt-2">{error}</p>}
-
-    {insights.length > 0 && (
-      <>
-        <ExportShareButtons
-          onExportTxt={onExportTxt}
-          onExportPdf={onExportPdf}
-          onShareLink={onShareLink}
-          onShowEmail={() => setShowEmailInput((prev) => !prev)}
+      {availableColumns.length > 0 && (
+        <InsightControls
+          availableColumns={availableColumns}
+          xAxis={xAxis}
+          yAxis={yAxis}
+          setXAxis={setXAxis}
+          setYAxis={setYAxis}
+          chartType={chartType}
+          setChartType={setChartType}
+          onGenerate={handleGenerateInsights}
+          loading={loading}
         />
-        {showEmailInput && (
-          <EmailInput email={email} setEmail={setEmail} onSend={onSendEmail} />
-        )}
-        {shareLink && (
-          <p className="mt-4 text-green-700 break-all">
-            Share Link:{" "}
-            <a href={shareLink} target="_blank" rel="noreferrer" className="underline">
-              {shareLink}
-            </a>
-          </p>
-        )}
-        <InsightList insights={insights} onCopy={onCopyInsight} />
-      </>
-    )}
-
-    <AnimatePresence>
-      {showConfirmModal && (
-        <ConfirmModal onCancel={handleCancel} onProceed={handleProceed} />
       )}
-    </AnimatePresence>
-  </div>
-);
 
+      {error && <p className="text-red-600 mt-2">{error}</p>}
+
+      {insights.length > 0 && (
+        <>
+          <ExportShareButtons
+            onExportTxt={handleExportTxt}
+            onExportPdf={handleExportPdf}
+            onShareLink={handleShare}
+            onShowEmail={() => setShowEmailInput((prev) => !prev)}
+          />
+          {showEmailInput && (
+            <EmailInput
+              email={email}
+              setEmail={setEmail}
+              onSend={handleEmailShare}
+            />
+          )}
+          {shareLink && (
+            <p className="mt-4 text-green-700 break-all">
+              Share Link:{" "}
+              <a href={shareLink} target="_blank" rel="noreferrer" className="underline">
+                {shareLink}
+              </a>
+            </p>
+          )}
+          <InsightList insights={insights} onCopy={handleCopy} />
+        </>
+      )}
+
+      <AnimatePresence>
+        {showConfirmModal && (
+          <ConfirmModal onCancel={handleCancel} onProceed={handleProceed} />
+        )}
+      </AnimatePresence>
+    </div>
+  );
 };
 
 export default AIInsights;
