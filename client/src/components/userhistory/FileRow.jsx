@@ -4,9 +4,9 @@ import { motion } from "framer-motion";
 const FileRow = ({ file, index, onView, onDownload, onDelete }) => (
   <motion.tr
     className="border-t hover:bg-blue-50"
-    initial={{ opacity: 0, y: 20 }}
+    initial={{ opacity: 0, y: 20, }}
     animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: index * 0.05 }}
+    transition={{ delay: index * 0.08 }}
   >
     <td className="p-4">{file.fileName}</td>
     <td className="p-4">{new Date(file.createdAt).toLocaleString()}</td>

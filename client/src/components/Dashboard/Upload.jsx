@@ -11,20 +11,8 @@ import SelectedFileDisplay from "../userupload/SelectedFileDisplay";
 import MessageDisplay from "../userupload/MessageDisplay";
 import UploadButtons from "../userupload/UploadButtons";
 import LoaderOverlay from "../userupload/LoaderOverlay";
+import { fadeInUp } from "../animations/fadeInUp";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i = 1) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.15,
-      duration: 0.6,
-      ease: "easeOut",
-    },
-  }),
-};
 
 function Upload() {
   const [file, setFile] = useState(null);
@@ -105,39 +93,78 @@ function Upload() {
 
   return (
     <div className="px-4 sm:px-6 md:px-8 py-10 min-h-screen bg-gradient-to-br from-[#dff1fd] to-[#b3dcf3] flex justify-center items-center">
-    <AnimatePresence>{loading && <LoaderOverlay />}</AnimatePresence>
-    <motion.form
-      onSubmit={handleSubmit}
-      className="bg-white/70 backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-2xl shadow-2xl w-full max-w-md"
-    >
-      <motion.h2 className="text-xl sm:text-2xl font-bold text-center text-[#007ea7] mb-2 outfit">
-        Upload Excel File
-      </motion.h2>
-      <motion.p className="text-center text-xs sm:text-sm text-blue-900 mb-6">
-        Supported formats: .xls, .xlsx
-      </motion.p>
-
-      <FileInput onChange={handleFileChange} />
-      {file && (
-        <SelectedFileDisplay fileName={file.name} onRemove={handleRemoveFile} />
-      )}
-      <motion.button
-        type="submit"
-        className="w-full bg-[#00ACC1] text-white py-2 rounded-xl shadow-md hover:bg-[#0097a7] transition duration-200"
+      <AnimatePresence>{loading && <LoaderOverlay />}</AnimatePresence>
+      <motion.form
+        onSubmit={handleSubmit}
+        className="bg-white/70 backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-2xl shadow-2xl w-full max-w-md"
       >
-        Upload
-      </motion.button>
+        <motion.h2
+          custom={0}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          className="text-xl sm:text-2xl font-bold text-center text-[#007ea7] mb-2 outfit"
+        >
+          Upload Excel File
+        </motion.h2>
+        <motion.p
+          custom={0.1}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          className="text-center text-xs sm:text-sm text-blue-900 mb-6"
+        >
+          Supported formats: .xls, .xlsx
+        </motion.p>
 
-      <MessageDisplay message={message} />
-
-      {message.startsWith("✅") && (
-        <UploadButtons
-          onAnalyze={() => navigate("/dashboard/analyze")}
-          onUpload={handleUploadToServer}
+        <FileInput
+          custom={0.2}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          onChange={handleFileChange}
         />
-      )}
-    </motion.form>
-  </div>
+        {file && (
+          <SelectedFileDisplay
+            custom={0.3}
+            initial="hidden"
+            animate="visible"
+            variants={fadeInUp}
+            fileName={file.name}
+            onRemove={handleRemoveFile}
+          />
+        )}
+        <motion.button
+          custom={0.4}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          type="submit"
+          className="w-full bg-[#00ACC1] text-white py-2 rounded-xl shadow-md hover:bg-[#0097a7] transition duration-200"
+        >
+          Upload
+        </motion.button>
+
+        <MessageDisplay
+          custom={0.1}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          message={message}
+        />
+
+        {message.startsWith("✅") && (
+          <UploadButtons
+            custom={0.1}
+            initial="hidden"
+            animate="visible"
+            variants={fadeInUp}
+            onAnalyze={() => navigate("/dashboard/analyze")}
+            onUpload={handleUploadToServer}
+          />
+        )}
+      </motion.form>
+    </div>
   );
 }
 

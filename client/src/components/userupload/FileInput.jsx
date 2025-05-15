@@ -1,6 +1,14 @@
+import { fadeInUp } from "../animations/fadeInUp";
+import { motion } from "framer-motion";
 function FileInput({ onChange }) {
   return (
-    <div className="mb-4 flex justify-center">
+    <motion.div
+      custom={0}
+      initial="hidden"
+      animate="visible"
+      variants={fadeInUp}
+      className="mb-4 flex justify-center"
+    >
       <input
         id="upload-input"
         type="file"
@@ -14,7 +22,7 @@ function FileInput({ onChange }) {
       >
         Choose File
       </label>
-    </div>
+    </motion.div>
   );
 }
 

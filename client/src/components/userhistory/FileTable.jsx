@@ -1,8 +1,16 @@
 import React from "react";
 import FileRow from "./FileRow";
+import { motion } from "framer-motion";
+import { fadeInUp } from "../animations/fadeInUp";
 
 const FileTable = ({ files, onView, onDownload, onDelete }) => (
-  <div className="overflow-x-auto">
+  <motion.div
+    custom={0.1}
+    initial="hidden"
+    animate="visible"
+    variants={fadeInUp}
+    className="overflow-x-auto"
+  >
     <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden animate-fade-in-up">
       <thead>
         <tr className="bg-blue-100 text-blue-800 text-left">
@@ -33,7 +41,7 @@ const FileTable = ({ files, onView, onDownload, onDelete }) => (
         )}
       </tbody>
     </table>
-  </div>
+  </motion.div>
 );
 
 export default FileTable;

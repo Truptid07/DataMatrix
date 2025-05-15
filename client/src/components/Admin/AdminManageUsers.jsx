@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import SearchFilterBar from "../adminmanageusers/SearchFilterBar";
 import UsersTable from "../adminmanageusers/UsersTable";
 import PaginationControls from "../adminmanageusers/PaginationControls";
+import { motion } from "framer-motion";
+import { fadeInUp } from "../animations/fadeInUp";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -49,7 +51,9 @@ export default function AdminManageUsers() {
       const res = await axios.put(`${BASE_URL}/api/admin/users/${id}`, body, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       });
-      setUsers((us) => us.map((u) => (u._id === id ? { ...u, ...res.data } : u)));
+      setUsers((us) =>
+        us.map((u) => (u._id === id ? { ...u, ...res.data } : u))
+      );
       cancelEdit();
     } catch {
       alert("Failed to save changes");
@@ -68,16 +72,22 @@ export default function AdminManageUsers() {
     }
   };
 
-  const handleChange = (e) => setFormState({ ...formState, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setFormState({ ...formState, [e.target.name]: e.target.value });
 
   const filteredUsers = users.filter((u) => {
-    const matchSearch = u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase());
+    const matchSearch =
+      u.name.toLowerCase().includes(search.toLowerCase()) ||
+      u.email.toLowerCase().includes(search.toLowerCase());
     const matchRole = roleFilter ? u.role === roleFilter : true;
     return matchSearch && matchRole;
   });
 
   const totalPages = Math.ceil(filteredUsers.length / filesPerPage);
-  const paginatedUsers = filteredUsers.slice((page - 1) * filesPerPage, page * filesPerPage);
+  const paginatedUsers = filteredUsers.slice(
+    (page - 1) * filesPerPage,
+    page * filesPerPage
+  );
 
   const resetFilters = () => {
     setSearch("");
@@ -86,9 +96,25 @@ export default function AdminManageUsers() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-4">Manage Users</h1>
-      <SearchFilterBar {...{ search, setSearch, roleFilter, setRoleFilter, resetFilters }} />
+    <motion.div
+      custom={0}
+      initial="hidden"
+      animate="visible"
+      variants={fadeInUp}
+      className="p-6"
+    >
+      <motion.h1
+        custom={0.2}
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        className="text-2xl font-semibold mb-4"
+      >
+        Manage Users
+      </motion.h1>
+      <SearchFilterBar
+        {...{ search, setSearch, roleFilter, setRoleFilter, resetFilters }}
+      />
       <UsersTable
         users={paginatedUsers}
         editingId={editingId}
@@ -100,6 +126,6 @@ export default function AdminManageUsers() {
         deleteUser={deleteUser}
       />
       <PaginationControls {...{ page, setPage, totalPages }} />
-    </div>
+    </motion.div>
   );
 }

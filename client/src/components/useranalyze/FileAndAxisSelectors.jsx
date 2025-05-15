@@ -19,7 +19,7 @@ export default function FileAndAxisSelectors({
 }) {
   return (
     <>
-      <motion.div variants={fadeUp} custom={2}>
+      <motion.div variants={fadeUp} custom={0.2}>
         <FileSelector
           files={files}
           selectedFileId={selectedFileId}
@@ -30,7 +30,7 @@ export default function FileAndAxisSelectors({
 
       {fileData && (
         <>
-          <motion.div variants={fadeUp} custom={3}>
+          <motion.div variants={fadeUp} custom={0.3}>
             <AxisSelector
               headers={fileData.headers}
               xAxis={xAxis}
@@ -40,7 +40,7 @@ export default function FileAndAxisSelectors({
             />
           </motion.div>
 
-          <motion.div variants={fadeUp} custom={4}>
+          <motion.div variants={fadeUp} custom={0.4}>
             <ChartTypeSelector
               chartType={chartType}
               setChartType={setChartType}

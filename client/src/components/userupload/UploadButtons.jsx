@@ -1,6 +1,15 @@
+import { motion } from "framer-motion";
+import { fadeInUp } from "../animations/fadeInUp";
+
 function UploadButtons({ onAnalyze, onUpload }) {
   return (
-    <div className="flex gap-2 mt-4">
+    <motion.div
+      custom={0.2}
+      initial="hidden"
+      animate="visible"
+      variants={fadeInUp}
+      className="flex gap-2 mt-4"
+    >
       <button
         onClick={onAnalyze}
         className="w-full bg-[#007ea7] text-white py-2 rounded-xl shadow-md hover:bg-[#009dc4] transition duration-200"
@@ -13,7 +22,7 @@ function UploadButtons({ onAnalyze, onUpload }) {
       >
         Upload to server
       </button>
-    </div>
+    </motion.div>
   );
 }
 
