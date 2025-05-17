@@ -6,13 +6,20 @@ import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import { motion, AnimatePresence } from "framer-motion";
 import { fadeInUp } from "../animations/fadeInUp";
-
+import {
+  copyToClipboard,
+  exportInsightsTxt,
+  exportInsightsPdf,
+  shareInsights,
+  emailShare,
+} from "../useraiinsighs/function";
 import FileSelector from "../useraiinsighs/FileSelector";
 import InsightControls from "../useraiinsighs/InsightControls";
 import ExportShareButtons from "../useraiinsighs/ExportShareButtons";
 import EmailInput from "../useraiinsighs/EmailInput";
 import InsightList from "../useraiinsighs/InsightList";
 import ConfirmModal from "../useraiinsighs/ConfirmModal";
+import TrendDetection from "../useraiinsighs/TrendDetection";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -95,81 +102,33 @@ const AIInsights = () => {
     }
   };
 
-  const handleCopy = (text) => {
-    navigator.clipboard.writeText(text).then(() => {
-      alert("Copied to clipboard!");
-    });
-  };
+  const handleCopy = (text) => copyToClipboard(text);
 
-  const handleExportTxt = () => {
-    const blob = new Blob(
-      [insights.map((i) => `${i.type}: ${i.text}`).join("\n\n")],
-      { type: "text/plain;charset=utf-8" }
-    );
-    saveAs(blob, "insights.txt");
-  };
+  const handleExportTxt = () => exportInsightsTxt(insights);
 
-  const handleExportPdf = () => {
-    const doc = new jsPDF();
-    let y = 10;
-    insights.forEach((insight) => {
-      doc.text(`${insight.type}:`, 10, y);
-      y += 7;
-      const lines = doc.splitTextToSize(insight.text, 180);
-      doc.text(lines, 10, y);
-      y += lines.length * 7 + 5;
-    });
-    doc.save("insights.pdf");
-  };
+  const handleExportPdf = () => exportInsightsPdf(insights);
 
   const handleShare = async () => {
-    if (!insights.length) return alert("Generate insights first!");
-    setLoading(true);
-    setError("");
     try {
-      const res = await axios.post(
-        `${BASE_URL}/api/insights/share`,
-        {
-          fileName: fileData.fileName,
-          insights: insights,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        }
+      await shareInsights(
+        insights,
+        fileData.fileName,
+        token,
+        setShareLink,
+        setShareId
       );
-      const link = res.data.url;
-      setShareLink(link);
-      const id = link.split("/").pop();
-      setShareId(id);
-      await navigator.clipboard.writeText(link);
-      alert("Link copied to clipboard!");
     } catch (err) {
-      setError("Failed to generate share link. Please try again.");
-    } finally {
-      setLoading(false);
+      setError(err.message);
     }
   };
 
   const handleEmailShare = async () => {
-    if (!email || !shareId)
-      return alert("Please share first, then enter a valid email.");
     try {
-      await axios.post(
-        `${BASE_URL}/api/insights/email`,
-        { email, shareId },
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        }
-      );
-      alert("Email sent successfully!");
+      await emailShare(email, shareId, token);
       setEmail("");
       setShowEmailInput(false);
-    } catch {
-      alert("Failed to send email.");
+    } catch (err) {
+      alert(err.message);
     }
   };
 
@@ -209,6 +168,13 @@ const AIInsights = () => {
           loading={loading}
         />
       )}
+
+      <TrendDetection
+        selectedFileId={selectedFileId}
+        localFile={localFile}
+        fileData={fileData}
+        availableColumns={availableColumns}
+      />
 
       {error && <p className="text-red-600 mt-2">{error}</p>}
 
