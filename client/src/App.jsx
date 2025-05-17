@@ -21,6 +21,7 @@ import Settings from "./components/Dashboard/Settings";
 import AdminManageUsers from "./components/Admin/AdminManageUsers";
 import AdminManageFiles from "./components/Admin/AdminManageFiles";
 import AdminSettings from "./components/Admin/AdminSettings";
+import ChatWithFile from "./components/Dashboard/ChatWithFile";
 
 function App() {
   const dispatch = useDispatch();
@@ -58,6 +59,7 @@ function App() {
           <Route path="history" element={<History />} />
           <Route path="ai-insights" element={<AIInsights />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="chatwithfile" element={<ChatWithFile />} />
         </Route>
 
         {/* Admin Dashboard */}

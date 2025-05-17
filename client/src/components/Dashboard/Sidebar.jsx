@@ -10,6 +10,7 @@ import {
   FaThLarge,
   FaBars,
   FaTimes,
+  FaComment,
 } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -59,6 +60,7 @@ function Sidebar() {
     { icon: <FaChartBar />, label: "Analyze Data", path: "/dashboard/analyze" },
     { icon: <FaHistory />, label: "History", path: "/dashboard/history" },
     { icon: <FaRobot />, label: "AI Insights", path: "/dashboard/ai-insights" },
+    { icon: <FaComment />, label: "Chat With File", path: "/dashboard/chatwithfile" },
     { icon: <FaCog />, label: "Settings", path: "/dashboard/settings" },
   ];
 
