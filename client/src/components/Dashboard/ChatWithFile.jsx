@@ -1,5 +1,6 @@
 // src/pages/ChatWithFile.jsx
 import React, { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 import axios from "axios";
 import * as XLSX from "xlsx";
 import { useFilesContext } from "../../context/FileContext";
@@ -194,7 +195,32 @@ const ChatWithFile = () => {
       {answer && (
         <div className="mt-8 p-4 border rounded bg-gray-50 whitespace-pre-wrap">
           <h2 className="font-semibold mb-2">AI Response:</h2>
-          <p>{answer}</p>
+          <ReactMarkdown
+            components={{
+              p: ({ children }) => (
+                <p className="mb-2 leading-relaxed">{children}</p>
+              ),
+              h2: ({ children }) => (
+                <h2 className="text-xl font-semibold mt-4 mb-2">{children}</h2>
+              ),
+              ul: ({ children }) => (
+                <ul className="list-disc list-inside mb-2">{children}</ul>
+              ),
+              li: ({ children }) => <li className="mb-1">{children}</li>,
+              code: ({ children }) => (
+                <code className="bg-gray-200 px-1 py-0.5 rounded text-sm font-mono">
+                  {children}
+                </code>
+              ),
+              pre: ({ children }) => (
+                <pre className="bg-gray-800 text-white p-3 rounded overflow-auto text-sm">
+                  {children}
+                </pre>
+              ),
+            }}
+          >
+            {answer}
+          </ReactMarkdown>
         </div>
       )}
     </div>
