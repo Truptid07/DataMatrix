@@ -12,7 +12,7 @@ import adminUserRoutes from "./routes/adminUserRoutes.js";
 import adminFileRoutes from "./routes/adminFileRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import trendsRoutes from "./routes/trendsRoutes.js";
-
+import explainRoutes from "./routes/explainRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -31,6 +31,8 @@ app.use("/api/insights", insightsRoutes);
 app.use("/api/chat", chatRoutes);
 
 app.use("/api/trends", trendsRoutes);
+
+app.use("/api/explain", explainRoutes);
 
 app.use("/api/admin", adminRoutes);
 

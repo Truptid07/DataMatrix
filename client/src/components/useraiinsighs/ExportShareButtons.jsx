@@ -6,6 +6,8 @@ const ExportShareButtons = ({
   onExportPdf,
   onShareLink,
   onShowEmail,
+  onExplainInsights,
+  loadingExplanation,
 }) => (
   <div className="mt-6 flex flex-wrap gap-4 animate-fade-in-up">
     <motion.button
@@ -56,7 +58,21 @@ const ExportShareButtons = ({
     >
       Email Link
     </motion.button>
+    <motion.button
+      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition disabled:opacity-50"
+      custom={0.6}
+      initial="hidden"
+      animate="visible"
+      variants={fadeInUp}
+      onClick={onExplainInsights}
+      disabled={loadingExplanation}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+    >
+      {loadingExplanation ? "Explaining..." : "Explain Insights"}
+    </motion.button>
   </div>
 );
+
 
 export default ExportShareButtons;
