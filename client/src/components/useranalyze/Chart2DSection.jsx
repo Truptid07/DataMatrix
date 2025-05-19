@@ -1,9 +1,12 @@
 import { motion } from "framer-motion";
+import axios from "axios";
 import ChartRenderer from "./ChartRenderer";
 import All2DChartsGrid from "./All2DChartsGrid";
 import { Download2DChartButton } from "./ChartDownloadButtons";
 import "./chartjs-setup";
 import { fadeInUp } from "../animations/fadeInUp";
+import { useSelector } from "react-redux";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Chart2DSection({
   fileData,
@@ -15,6 +18,31 @@ export default function Chart2DSection({
   chartRef,
   fadeUp,
 }) {
+  const { token } = useSelector((state) => state.auth);
+  const handlePinChart = async () => {
+    try {
+      await axios.post(
+        `${BASE_URL}/api/pinned-charts`,
+        {
+          title: `${chartType} Chart`,
+          type: chartType,
+          data: fileData,
+          config: { xAxis, yAxis },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert("Chart pinned successfully");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to pin chart");
+    }
+  };
+
   return (
     <>
       {fileData && xAxis && yAxis && (
@@ -53,7 +81,15 @@ export default function Chart2DSection({
               chartType={chartType}
             />
           </div>
-          <Download2DChartButton chartRef={chartRef} />
+          <div className="flex gap-4">
+            <Download2DChartButton chartRef={chartRef} />
+            <button
+              onClick={handlePinChart}
+              className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
+            >
+              📌 Pin Chart
+            </button>
+          </div>
         </motion.div>
       )}
     </>

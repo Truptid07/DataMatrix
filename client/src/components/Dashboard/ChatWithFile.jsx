@@ -1,5 +1,9 @@
 // src/pages/ChatWithFile.jsx
 import React, { useState, useEffect } from "react";
+import {
+  exportInsightsPdf,
+  exportInsightsTxt,
+} from "../useraiinsighs/function";
 import ReactMarkdown from "react-markdown";
 import axios from "axios";
 import * as XLSX from "xlsx";
@@ -120,6 +124,13 @@ const ChatWithFile = () => {
     }
   };
 
+  const getInsightsArray = (answerText) => [
+    {
+      type: "AI Response",
+      text: answerText,
+    },
+  ];
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Chat with Your File Data</h1>
@@ -221,6 +232,24 @@ const ChatWithFile = () => {
           >
             {answer}
           </ReactMarkdown>
+          <div className="mt-4 flex gap-4">
+            <button
+              onClick={() =>
+                exportInsightsPdf(getInsightsArray(answer), "chat_response.pdf")
+              }
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            >
+              Download as PDF
+            </button>
+            <button
+              onClick={() =>
+                exportInsightsTxt(getInsightsArray(answer), "chat_response.txt")
+              }
+              className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800"
+            >
+              Download as TXT
+            </button>
+          </div>
         </div>
       )}
     </div>

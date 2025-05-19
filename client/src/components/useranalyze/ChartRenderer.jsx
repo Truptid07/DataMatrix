@@ -116,6 +116,8 @@ function ChartRenderer({ fileData, xAxis, yAxis, chartType }) {
                   y: row[yAxis],
                   r: 5,
                 })),
+                backgroundColor: "#42A5F5",
+                borderColor: "#1E88E5",
               },
             ],
           }}
