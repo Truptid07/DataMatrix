@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 import axios from "axios";
 import { useFilesContext } from "../../context/FileContext";
 import { useLocalFile } from "../../context/LocalFileContext";
@@ -42,6 +43,9 @@ const AIInsights = () => {
   const [shareId, setShareId] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
+  const [explanation, setExplanation] = useState("");
+  const [loadingExplanation, setLoadingExplanation] = useState(false);
+  const [explainError, setExplainError] = useState(null);
 
   useEffect(() => {
     fetchFiles();
@@ -142,6 +146,34 @@ const AIInsights = () => {
     setShowConfirmModal(false);
   };
 
+  const handleExplainInsights = async () => {
+    if (!insights || insights.length === 0) return;
+
+    setLoadingExplanation(true);
+    setExplainError(null);
+    setExplanation("");
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/api/explain`,
+        {
+          type: "insights",
+          data: insights,
+          fileData: fileData.data,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+        }
+      );
+      setExplanation(response.data.explanation);
+    } catch (error) {
+      setExplainError("Failed to generate explanation. Please try again.");
+    } finally {
+      setLoadingExplanation(false);
+    }
+  };
+
   return (
     <div className="container mx-auto p-4 max-w-5xl">
       <FileSelector
@@ -168,13 +200,14 @@ const AIInsights = () => {
           loading={loading}
         />
       )}
-
-      <TrendDetection
-        selectedFileId={selectedFileId}
-        localFile={localFile}
-        fileData={fileData}
-        availableColumns={availableColumns}
-      />
+      {availableColumns.length > 0 && (
+        <TrendDetection
+          selectedFileId={selectedFileId}
+          localFile={localFile}
+          fileData={fileData}
+          availableColumns={availableColumns}
+        />
+      )}
 
       {error && <p className="text-red-600 mt-2">{error}</p>}
 
@@ -185,6 +218,8 @@ const AIInsights = () => {
             onExportPdf={handleExportPdf}
             onShareLink={handleShare}
             onShowEmail={() => setShowEmailInput((prev) => !prev)}
+            onExplainInsights={handleExplainInsights}
+            loadingExplanation={loadingExplanation}
           />
           {showEmailInput && (
             <EmailInput
@@ -207,6 +242,13 @@ const AIInsights = () => {
             </p>
           )}
           <InsightList insights={insights} onCopy={handleCopy} />
+          {explainError && <p className="text-red-600 mt-2">{explainError}</p>}
+
+          {explanation && (
+            <div className="explanation-box mt-4 p-3 border rounded bg-gray-100 text-gray-800 whitespace-pre-wrap">
+              <ReactMarkdown>{explanation}</ReactMarkdown>
+            </div>
+          )}
         </>
       )}
 
