@@ -2,6 +2,8 @@ import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useTranslation } from 'react-i18next';
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const fadeUp = {
@@ -18,9 +20,9 @@ const fadeUp = {
 };
 
 function DashboardHome() {
-  const { user } = useSelector((state) => state.auth);
+  const { user, token } = useSelector((state) => state.auth);
   const [pinnedCharts, setPinnedCharts] = useState([]);
-  const { token } = useSelector((state) => state.auth);
+  const { t } = useTranslation();
 
   const handleUnpin = async (chartId) => {
     try {
@@ -29,7 +31,6 @@ function DashboardHome() {
           Authorization: `Bearer ${token}`,
         },
       });
-
       setPinnedCharts((prev) => prev.filter((chart) => chart._id !== chartId));
     } catch (error) {
       console.error("Failed to unpin chart:", error);
@@ -64,7 +65,7 @@ function DashboardHome() {
         variants={fadeUp}
         custom={1}
       >
-        Welcome {user?.name}!
+        {t("welcome", { name: user?.name })}
       </motion.h1>
 
       <motion.p
@@ -72,14 +73,13 @@ function DashboardHome() {
         variants={fadeUp}
         custom={2}
       >
-        You have successfully logged in. Your analytics and uploads will appear
-        here.
+        {t("dashboard.welcomeMessage")}
       </motion.p>
 
       {pinnedCharts.length > 0 && (
         <motion.div variants={fadeUp} custom={3} className="mt-4">
           <h2 className="text-lg font-semibold text-gray-700 mb-2">
-            📌 Your Pinned Charts
+            📌 {t("dashboard.pinnedCharts")}
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {pinnedCharts.map((chart) => (
@@ -90,16 +90,21 @@ function DashboardHome() {
                 <h3 className="font-semibold text-indigo-600 mb-1">
                   {chart.title}
                 </h3>
-                <p className="text-sm text-gray-500 mb-1">Type: {chart.type}</p>
+                <p className="text-sm text-gray-500 mb-1">
+                  {t("dashboard.type")}: {chart.type}
+                </p>
                 <p className="text-sm text-gray-500 mb-2">
-                  X: {chart.config?.xAxis}, Y: {chart.config?.yAxis}
+                  {t("dashboard.axis", {
+                    x: chart.config?.xAxis,
+                    y: chart.config?.yAxis,
+                  })}
                 </p>
                 <button
                   onClick={() => handleUnpin(chart._id)}
                   className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-sm"
-                  title="Unpin chart"
+                  title={t("dashboard.unpin")}
                 >
-                  ✖ Unpin
+                  ✖ {t("dashboard.unpin")}
                 </button>
               </div>
             ))}

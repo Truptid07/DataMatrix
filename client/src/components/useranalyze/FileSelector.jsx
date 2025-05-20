@@ -1,21 +1,23 @@
 import { useLocalFile } from "../../context/LocalFileContext";
+import { useTranslation } from "react-i18next";
 
 function FileSelector({ files, selectedFileId, setSelectedFileId, isLocal }) {
+  const { t } = useTranslation();
   const { localFile } = useLocalFile();
 
   return (
     <div className="mb-6">
-      <label className="font-medium text-gray-700">Select File:</label>
+      <label className="font-medium text-gray-700">{t("analyze.selectFile")}</label>
       <select
         value={selectedFileId || (isLocal ? "local" : "")}
         onChange={(e) => setSelectedFileId(e.target.value)}
         className="w-full border mt-2 px-3 py-2 rounded"
       >
-        <option value="">-- Choose a file --</option>
+        <option value="">{t("analyze.chooseFilePlaceholder")}</option>
 
         {localFile && (
           <option value="local">
-            (Local) {localFile.fileName}
+            ({t("analyze.local")}) {localFile.fileName}
           </option>
         )}
 

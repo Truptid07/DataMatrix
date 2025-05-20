@@ -2,8 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { motion } from "framer-motion";
-import { AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
 import { useLocalFile } from "../../context/LocalFileContext";
 import FileInput from "../userupload/FileInput";
@@ -12,9 +11,13 @@ import MessageDisplay from "../userupload/MessageDisplay";
 import UploadButtons from "../userupload/UploadButtons";
 import LoaderOverlay from "../userupload/LoaderOverlay";
 import { fadeInUp } from "../animations/fadeInUp";
+import { useTranslation } from "react-i18next";
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function Upload() {
+  const { t } = useTranslation();
+
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
   const { token } = useSelector((state) => state.auth);
@@ -35,7 +38,7 @@ function Upload() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!file) return setMessage("Please select a file.");
+    if (!file) return setMessage(t("upload.pleaseSelectFile"));
 
     setLoading(true);
 
@@ -55,17 +58,17 @@ function Upload() {
         };
 
         setLocalFile(filePayload);
-        setMessage("✅ File loaded locally. You can now analyze or upload.");
+        setMessage(t("upload.fileLoadedLocally"));
       } catch (err) {
         console.error("Parsing error:", err);
-        setMessage("❌ Failed to parse the file.");
+        setMessage(t("upload.failedToParseFile"));
       } finally {
         setLoading(false);
       }
     };
     reader.onerror = () => {
       setLoading(false);
-      setMessage("❌ Failed to read the file.");
+      setMessage(t("upload.failedToReadFile"));
     };
     reader.readAsArrayBuffer(file);
   };
@@ -83,11 +86,11 @@ function Upload() {
         },
       });
       setLoading(false);
-      alert("✅ File uploaded to server.");
+      alert(t("upload.uploadSuccess"));
     } catch (error) {
       console.error(error);
       setLoading(false);
-      alert("❌ Upload failed.");
+      alert(t("upload.uploadFailed"));
     }
   };
 
@@ -105,7 +108,7 @@ function Upload() {
           variants={fadeInUp}
           className="text-xl sm:text-2xl font-bold text-center text-[#007ea7] mb-2 outfit"
         >
-          Upload Excel File
+          {t("upload.title")}
         </motion.h2>
         <motion.p
           custom={0.1}
@@ -114,7 +117,7 @@ function Upload() {
           variants={fadeInUp}
           className="text-center text-xs sm:text-sm text-blue-900 mb-6"
         >
-          Supported formats: .xls, .xlsx
+          {t("upload.supportedFormats")}
         </motion.p>
 
         <FileInput
@@ -142,7 +145,7 @@ function Upload() {
           type="submit"
           className="w-full bg-[#00ACC1] text-white py-2 rounded-xl shadow-md hover:bg-[#0097a7] transition duration-200"
         >
-          Upload
+          {t("upload.uploadButton")}
         </motion.button>
 
         <MessageDisplay

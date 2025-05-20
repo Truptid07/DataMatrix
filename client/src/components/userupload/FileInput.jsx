@@ -1,6 +1,10 @@
 import { fadeInUp } from "../animations/fadeInUp";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
+
 function FileInput({ onChange }) {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       custom={0}
@@ -20,7 +24,7 @@ function FileInput({ onChange }) {
         htmlFor="upload-input"
         className="inline-block px-4 py-2 bg-[#007ea7] text-white rounded-full cursor-pointer hover:bg-[#009dc4] text-sm"
       >
-        Choose File
+        {t("upload.chooseFile")}
       </label>
     </motion.div>
   );

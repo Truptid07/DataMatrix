@@ -1,6 +1,7 @@
 import axios from "axios";
 import * as XLSX from "xlsx";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -13,10 +14,11 @@ export default function SaveToDashboardButton({
   setIsSaved,
 }) {
   const { token } = useSelector((state) => state.auth);
+  const { t } = useTranslation();
 
   const handleSaveToDashboard = () => {
     if (!localFile || !localFile.data || !localFile.fileName)
-      return alert("No local file to save.");
+      return alert(t("analyze.noLocalFile"));
 
     const worksheet = XLSX.utils.json_to_sheet(localFile.data);
     const workbook = XLSX.utils.book_new();
@@ -42,13 +44,13 @@ export default function SaveToDashboardButton({
         },
       })
       .then(async () => {
-        alert("✅ File saved to dashboard.");
+        alert("✅ " + t("analyze.fileSaved"));
         await fetchFiles();
         setSelectedFileId("");
         setFileData(null);
         setIsSaved(true);
       })
-      .catch(() => alert("❌ Failed to save file."));
+      .catch(() => alert("❌ " + t("analyze.fileSaveFailed")));
   };
 
   return (
@@ -59,7 +61,7 @@ export default function SaveToDashboardButton({
         isSaved ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
       }`}
     >
-      {isSaved ? "✔️ Saved" : "Save to Dashboard"}
+      {isSaved ? "✔️ " + t("analyze.saved") : t("analyze.saveToDashboard")}
     </button>
   );
 }

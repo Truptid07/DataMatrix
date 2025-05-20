@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/authSlice";
 import { useNavigate } from "react-router-dom";
+import LanguageSwitcher from "../LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 const itemVariants = {
   hidden: { y: 20, opacity: 0 },
@@ -12,6 +14,7 @@ function Topbar() {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleLogout = () => {
     dispatch(logout());
@@ -31,6 +34,7 @@ function Topbar() {
       initial="hidden"
       animate="visible"
     >
+      <LanguageSwitcher />
       <motion.span
         variants={itemVariants}
         className="text-[#2E3C43] outfit font-semibold"
@@ -42,7 +46,7 @@ function Topbar() {
         onClick={handleLogout}
         className="bg-white text-[#00ACC1] px-4 py-2 rounded shadow-sm hover:bg-[#4DD0E1] hover:text-white transition-all cursor-pointer outfit font-semibold"
       >
-        Logout
+        {t("logout")}
       </motion.button>
     </motion.div>
   );

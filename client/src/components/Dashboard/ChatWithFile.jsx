@@ -1,4 +1,3 @@
-// src/pages/ChatWithFile.jsx
 import React, { useState, useEffect } from "react";
 import {
   exportInsightsPdf,
@@ -9,6 +8,7 @@ import axios from "axios";
 import * as XLSX from "xlsx";
 import { useFilesContext } from "../../context/FileContext";
 import { useLocalFile } from "../../context/LocalFileContext";
+import { useTranslation } from "react-i18next";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -27,6 +27,7 @@ const ChatWithFile = () => {
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { t } = useTranslation();
 
   // Fetch backend files on mount
   useEffect(() => {
@@ -133,18 +134,18 @@ const ChatWithFile = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Chat with Your File Data</h1>
+      <h1 className="text-2xl font-bold mb-4">{t("chatWithFile.title")}</h1>
 
       <div className="mb-6">
         <label className="block font-semibold mb-2">
-          Select or upload file:
+          {t("chatWithFile.selectOrUpload")}
         </label>
         <select
           className="w-full p-2 rounded border border-blue-300 bg-white mb-3"
           value={selectedFileId}
           onChange={(e) => setSelectedFileId(e.target.value)}
         >
-          <option value="">-- Choose a file --</option>
+          <option value="">{t("chatWithFile.chooseFile")}</option>
 
           {localFile?.data && (
             <option value="local">
@@ -169,21 +170,21 @@ const ChatWithFile = () => {
 
       <div className="mb-4">
         <label className="block font-semibold mb-2">
-          Ask a question about your data:
+          {t("chatWithFile.askQuestion")}
         </label>
         <textarea
           rows={4}
           className="border p-2 w-full resize-none"
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
-          placeholder="Type your question here..."
+          placeholder={t("chatWithFile.placeholder")}
           disabled={
             !activeData || !activeData.data || activeData.data.length === 0
           }
         />
       </div>
 
-      {error && <p className="text-red-600 mb-4">{error}</p>}
+      {error && <p className="text-red-600 mb-4">{t(error)}</p>}
 
       <button
         onClick={handleSubmit}
@@ -200,12 +201,12 @@ const ChatWithFile = () => {
             : "bg-blue-600 hover:bg-blue-700"
         }`}
       >
-        {loading ? "Thinking..." : "Ask"}
+        {loading ? t("chatWithFile.thinking") : t("chatWithFile.ask")}
       </button>
 
       {answer && (
         <div className="mt-8 p-4 border rounded bg-gray-50 whitespace-pre-wrap">
-          <h2 className="font-semibold mb-2">AI Response:</h2>
+          <h2 className="font-semibold mb-2">{t("chatWithFile.aiResponse")}</h2>
           <ReactMarkdown
             components={{
               p: ({ children }) => (
@@ -239,7 +240,7 @@ const ChatWithFile = () => {
               }
               className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
             >
-              Download as PDF
+              {t("chatWithFile.downloadPdf")}
             </button>
             <button
               onClick={() =>
@@ -247,7 +248,7 @@ const ChatWithFile = () => {
               }
               className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800"
             >
-              Download as TXT
+              {t("chatWithFile.downloadTxt")}
             </button>
           </div>
         </div>
