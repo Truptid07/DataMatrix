@@ -6,6 +6,8 @@ import { Download2DChartButton } from "./ChartDownloadButtons";
 import "./chartjs-setup";
 import { fadeInUp } from "../animations/fadeInUp";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Chart2DSection({
@@ -18,7 +20,9 @@ export default function Chart2DSection({
   chartRef,
   fadeUp,
 }) {
+  const { t } = useTranslation();
   const { token } = useSelector((state) => state.auth);
+
   const handlePinChart = async () => {
     try {
       await axios.post(
@@ -36,10 +40,10 @@ export default function Chart2DSection({
         }
       );
 
-      alert("Chart pinned successfully");
+      alert(t("analyze.pinSuccess"));
     } catch (err) {
       console.error(err);
-      alert("Failed to pin chart");
+      alert(t("analyze.pinError"));
     }
   };
 
@@ -57,7 +61,7 @@ export default function Chart2DSection({
             onClick={() => setShowAll2D((prev) => !prev)}
             className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
           >
-            {showAll2D ? "Hide All Charts" : "Show All Charts"}
+            {showAll2D ? t("analyze.hideAllCharts") : t("analyze.showAllCharts")}
           </button>
         </motion.div>
       )}
@@ -87,7 +91,7 @@ export default function Chart2DSection({
               onClick={handlePinChart}
               className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
             >
-              📌 Pin Chart
+              📌 {t("analyze.pinChart")}
             </button>
           </div>
         </motion.div>

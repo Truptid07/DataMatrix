@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useFilesContext } from "../../context/FileContext";
 import { useLocalFile } from "../../context/LocalFileContext";
 import { fadeInUp } from "../animations/fadeInUp";
+import { useTranslation } from "react-i18next";
 
 import FileAndAxisSelectors from "../useranalyze/FileAndAxisSelectors";
 import SaveToDashboardButton from "../useranalyze/SaveToDashboardButton";
@@ -11,6 +12,7 @@ import Chart2DSection from "../useranalyze/Chart2DSection";
 import Chart3DSection from "../useranalyze/Chart3DSection";
 
 function Analyze() {
+  const { t } = useTranslation();
   const { token } = useSelector((state) => state.auth);
   const {
     files,
@@ -84,7 +86,7 @@ function Analyze() {
         animate="visible"
         variants={fadeInUp}
       >
-        Analyze Your Data
+        {t("analyze.title")}
       </motion.h1>
 
       <FileAndAxisSelectors

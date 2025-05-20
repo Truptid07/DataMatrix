@@ -13,6 +13,7 @@ import {
   FaComment,
 } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const sidebarVariants = {
   hidden: { x: -300, opacity: 0 },
@@ -53,15 +54,16 @@ function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const items = [
-    { icon: <FaThLarge />, label: "Dashboard", path: "/dashboard" },
-    { icon: <FaFileExcel />, label: "Upload Excel", path: "/dashboard/upload" },
-    { icon: <FaChartBar />, label: "Analyze Data", path: "/dashboard/analyze" },
-    { icon: <FaHistory />, label: "History", path: "/dashboard/history" },
-    { icon: <FaRobot />, label: "AI Insights", path: "/dashboard/ai-insights" },
-    { icon: <FaComment />, label: "Chat With File", path: "/dashboard/chatwithfile" },
-    { icon: <FaCog />, label: "Settings", path: "/dashboard/settings" },
+    { icon: <FaThLarge />, label: t("sidebar.dashboard"), path: "/dashboard" },
+    { icon: <FaFileExcel />, label: t("sidebar.uploadExcel"), path: "/dashboard/upload" },
+    { icon: <FaChartBar />, label: t("sidebar.analyzeData"), path: "/dashboard/analyze" },
+    { icon: <FaHistory />, label: t("sidebar.history"), path: "/dashboard/history" },
+    { icon: <FaRobot />, label: t("sidebar.aiInsights"), path: "/dashboard/ai-insights" },
+    { icon: <FaComment />, label: t("sidebar.chatWithFile"), path: "/dashboard/chatwithfile" },
+    { icon: <FaCog />, label: t("sidebar.settings"), path: "/dashboard/settings" },
   ];
 
   const handleNavigate = (path) => {
@@ -73,7 +75,6 @@ function Sidebar() {
 
   return (
     <>
-      {/* Mobile toggle button */}
       <button
         onClick={() => setIsOpen(true)}
         className="md:hidden text-[#00ACC1] text-2xl m-4 fixed top-4 left-4 z-50"
@@ -81,11 +82,9 @@ function Sidebar() {
         <FaBars />
       </button>
 
-      {/* Mobile overlay and sidebar */}
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Overlay */}
             <motion.div
               className="fixed inset-0 backdrop-blur-[60px] z-40"
               onClick={() => setIsOpen(false)}
@@ -94,7 +93,6 @@ function Sidebar() {
               exit={{ opacity: 0 }}
             />
 
-            {/* Mobile sidebar */}
             <motion.aside
               variants={sidebarVariants}
               initial="hidden"
@@ -108,11 +106,8 @@ function Sidebar() {
                 </button>
               </div>
 
-              <motion.div
-                variants={itemVariants}
-                className="flex items-center gap-3 mb-8"
-              >
-                <img src="/logo.png" alt="SheetSense Logo" className="w-10 h-10" />
+              <motion.div variants={itemVariants} className="flex items-center gap-3 mb-8">
+                <img src="/logo.png" alt={t("sidebar.logoAlt")} className="w-10 h-10" />
                 <h2 className="text-2xl font-bold outfit tracking-wide text-white">
                   SheetSense
                 </h2>
@@ -133,21 +128,15 @@ function Sidebar() {
         )}
       </AnimatePresence>
 
-      {/* Desktop sidebar */}
       <motion.aside
         variants={sidebarVariants}
         initial="hidden"
         animate="visible"
-        className="hidden md:flex w-64 bg-[#00ACC1] text-white p-6 flex-col gap-6 shadow-lg rounded-tr-3xl rounded-br-3xl"
+        className="hidden md:flex w-64 bg-[#00ACC1] text-white p-6 flex flex-col gap-6 shadow-lg rounded-tr-3xl rounded-br-3xl"
       >
-        <motion.div
-          variants={itemVariants}
-          className="flex items-center gap-3 mb-8"
-        >
-          <img src="/logo.png" alt="SheetSense Logo" className="w-10 h-10" />
-          <h2 className="text-2xl font-bold outfit tracking-wide text-white">
-            SheetSense
-          </h2>
+        <motion.div variants={itemVariants} className="flex items-center gap-3 mb-8">
+          <img src="/logo.png" alt={t("sidebar.logoAlt")} className="w-10 h-10" />
+          <h2 className="text-2xl font-bold outfit tracking-wide text-white">SheetSense</h2>
         </motion.div>
 
         {items.map((item, index) => (

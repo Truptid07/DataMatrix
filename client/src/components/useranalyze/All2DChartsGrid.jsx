@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import ChartRenderer from "./ChartRenderer";
+import { useTranslation } from "react-i18next";
 
 const chartTypes = [
   "bar",
@@ -13,6 +14,8 @@ const chartTypes = [
 ];
 
 const All2DChartsGrid = ({ fileData, xAxis, yAxis }) => {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6"
@@ -31,7 +34,7 @@ const All2DChartsGrid = ({ fileData, xAxis, yAxis }) => {
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
           <h3 className="text-center font-semibold mb-2 capitalize">
-            {type} Chart
+            {t(`analyze.chartTypes.${type}`)} {t("analyze.chart")}
           </h3>
           <ChartRenderer
             fileData={fileData}

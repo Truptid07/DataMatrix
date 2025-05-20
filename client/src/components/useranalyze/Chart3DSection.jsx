@@ -3,6 +3,7 @@ import ThreeDChart from "./ThreeDChart";
 import ThreeDChartSelector from "./ThreeDChartSelector";
 import { Download3DChartButton } from "./ChartDownloadButtons";
 import { fadeInUp } from "../animations/fadeInUp";
+import { useTranslation } from "react-i18next";
 
 export default function Chart3DSection({
   fileData,
@@ -13,13 +14,17 @@ export default function Chart3DSection({
   canvasRef,
   fadeUp,
 }) {
+  const { t } = useTranslation();
+
   return (
     <motion.section
       variants={fadeInUp}
       custom={0.2}
       className="mt-6 bg-white shadow-md rounded-lg p-4 space-y-4"
     >
-      <h2 className="text-lg font-semibold text-gray-800">3D Chart Options</h2>
+      <h2 className="text-lg font-semibold text-gray-800">
+        {t("analyze.chart3DOptions")}
+      </h2>
 
       <ThreeDChartSelector
         selected3DChartType={selected3DChartType}
