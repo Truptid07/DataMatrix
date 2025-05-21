@@ -2,7 +2,8 @@ import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
+import ChartRenderer from "../useranalyze/ChartRenderer";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -90,15 +91,35 @@ function DashboardHome() {
                 <h3 className="font-semibold text-indigo-600 mb-1">
                   {chart.title}
                 </h3>
+
+                <p className="text-sm text-gray-500 mb-1">
+                  📂 {t("fileName")}:{" "}
+                  {chart.fileName || "Unnamed File"}
+                </p>
+
                 <p className="text-sm text-gray-500 mb-1">
                   {t("dashboard.type")}: {chart.type}
                 </p>
+
                 <p className="text-sm text-gray-500 mb-2">
                   {t("dashboard.axis", {
                     x: chart.config?.xAxis,
                     y: chart.config?.yAxis,
                   })}
                 </p>
+
+                {/* ✅ Chart Preview */}
+                <div className="bg-white mt-2">
+                  <ChartRenderer
+                    fileData={chart.data}
+                    xAxis={chart.config?.xAxis}
+                    yAxis={chart.config?.yAxis}
+                    chartType={chart.type}
+                    isSmall
+                  />
+                </div>
+
+                {/* Unpin button */}
                 <button
                   onClick={() => handleUnpin(chart._id)}
                   className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-sm"

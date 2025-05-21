@@ -9,13 +9,16 @@ import {
   Bubble,
 } from "react-chartjs-2";
 
-function ChartRenderer({ fileData, xAxis, yAxis, chartType }) {
+function ChartRenderer({ fileData, xAxis, yAxis, chartType, isSmall = false }) {
   if (!fileData || !xAxis || !yAxis || chartType === "none") return null;
 
   const canRenderChart = (chartType, xAxis, yAxis) => {
     if (chartType === "none") return true;
     if (!xAxis || !yAxis) return false;
-    if ((chartType === "pie" || chartType === "doughnut") && yAxis !== "numeric") {
+    if (
+      (chartType === "pie" || chartType === "doughnut") &&
+      yAxis !== "numeric"
+    ) {
       return false;
     }
     return true;
@@ -56,7 +59,13 @@ function ChartRenderer({ fileData, xAxis, yAxis, chartType }) {
 
   const chartWrapper = (chartComponent) => (
     <div className="w-full max-w-full overflow-x-auto">
-      <div className="w-[200px] md:w-[450px] lg:w-[800px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[500px]">
+      <div
+        className={`${
+          isSmall
+            ? "w-[200px] h-[150px] md:w-[300px] md:h-[200px]"
+            : "w-[200px] md:w-[450px] lg:w-[800px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[500px]"
+        }`}
+      >
         {chartComponent}
       </div>
     </div>

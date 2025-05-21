@@ -27,6 +27,8 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const AIInsights = () => {
   const { t } = useTranslation();
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language;
 
   const { files, selectedFileId, setSelectedFileId, fileData, fetchFiles } =
     useFilesContext();
@@ -78,6 +80,7 @@ const AIInsights = () => {
         xAxis,
         yAxis,
         chartType,
+        language: i18n.language
       });
     }
   }, [selectedFileId, fileData, localFile, xAxis, yAxis, chartType]);
@@ -162,6 +165,7 @@ const AIInsights = () => {
           type: "insights",
           data: insights,
           fileData: fileData.data,
+          language: i18n.language,
         },
         {
           headers: {
