@@ -6,7 +6,15 @@ import sendEmail from "../utils/sendEmail.js";
 // POST /api/insights
 export const getInsights = async (req, res) => {
   try {
-    const { fileName, headers, xAxis, yAxis, data } = req.body;
+    const { fileName, headers, xAxis, yAxis, data, language } = req.body;
+    const languageMap = {
+      en: "English",
+      hi: "Hindi",
+      fr: "French",
+      es: "Spanish",
+      de: "German",
+    };
+    const langName = languageMap[language] || "English";
 
     const userPrompt = `
 You are a highly skilled data analyst.
@@ -25,9 +33,8 @@ Return your response strictly as a JSON array with objects in this format:
   { "type": "Actionable Insight", "text": "<concise recommendation or action>" }
 ]
 
-Keep each response objective, insightful, and based on observable patterns in the data.
+Important: Respond in ${langName}.
 `;
-
 
     // Generate text with Gemini 2.0 Flash
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
@@ -155,5 +162,3 @@ You received this email because someone used SheetSense to share insights with y
     res.status(500).json({ error: "Failed to send email" });
   }
 };
-
-

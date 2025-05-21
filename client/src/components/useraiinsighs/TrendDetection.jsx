@@ -23,6 +23,8 @@ const TrendDetection = ({
   const [explanation, setExplanation] = useState("");
   const [loadingExplanation, setLoadingExplanation] = useState(false);
   const [explainError, setExplainError] = useState(null);
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language;
 
   const handleDetectTrend = async () => {
     if (!trendColumn) return;
@@ -33,7 +35,7 @@ const TrendDetection = ({
       const activeFile = selectedFileId === "local" ? localFile : fileData;
       const response = await axios.post(
         `${BASE_URL}/api/trends`,
-        { fileData: activeFile.data },
+        { fileData: activeFile.data, language: i18n.language },
         {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -60,6 +62,7 @@ const TrendDetection = ({
           type: "trends",
           data: trendResult,
           fileData: fileData?.data,
+          language: i18n.language,
         },
         {
           headers: {
@@ -105,7 +108,9 @@ const TrendDetection = ({
           value={trendColumn}
           onChange={(e) => setTrendColumn(e.target.value)}
         >
-          <option value="">{t("aiInsights.trendDetection.selectNumeric")}</option>
+          <option value="">
+            {t("aiInsights.trendDetection.selectNumeric")}
+          </option>
           {availableColumns
             .filter((col) => {
               const val =
@@ -220,9 +225,7 @@ const TrendDetection = ({
             </button>
           </div>
 
-          {explainError && (
-            <p className="text-red-600 mt-2">{explainError}</p>
-          )}
+          {explainError && <p className="text-red-600 mt-2">{explainError}</p>}
 
           {explanation && (
             <div className="explanation-box mt-4 p-3 border rounded bg-gray-100 text-gray-800 whitespace-pre-wrap">

@@ -32,6 +32,7 @@ export default function Chart2DSection({
           type: chartType,
           data: fileData,
           config: { xAxis, yAxis },
+          fileName: fileData?.fileName || "Unnamed File",
         },
         {
           headers: {

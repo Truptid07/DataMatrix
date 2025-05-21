@@ -13,13 +13,14 @@ export const getPinnedCharts = async (req, res) => {
 // Pin a new chart for the authenticated user
 export const pinChart = async (req, res) => {
   try {
-    const { title, type, data, config } = req.body;
+    const { title, type, data, config, fileName } = req.body;
     const newChart = new PinnedChart({
       userId: req.user.id,
       title,
       type,
       data,
       config,
+      fileName,
     });
     await newChart.save();
     res.status(201).json({ message: "Chart pinned", chart: newChart });

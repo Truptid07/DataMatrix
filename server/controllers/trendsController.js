@@ -3,7 +3,16 @@ import { linearRegression, getTrendDirection } from "../utils/stats.js";
 
 export const detectTrend = async (req, res) => {
   try {
-    const { fileData } = req.body;
+    const { fileData, language } = req.body;
+
+    const languageMap = {
+      en: "English",
+      hi: "Hindi",
+      fr: "French",
+      es: "Spanish",
+      de: "German",
+    };
+    const langName = languageMap[language] || "English";
 
     if (!fileData || !Array.isArray(fileData) || fileData.length === 0) {
       return res.status(400).json({ error: "No file data provided." });
@@ -44,7 +53,8 @@ export const detectTrend = async (req, res) => {
 
     // Gemini AI prompt
     const prompt = `
-You are a data analyst AI. Analyze the following dataset column "${trendCol}" and provide a concise trend summary.
+You are a data analyst AI. Analyze the following dataset column "${trendCol}" and provide a concise trend summary that a beginner can understand.
+
 Here are 30 sample data points:
 ${JSON.stringify(points.slice(0, 30))}
 
@@ -52,10 +62,13 @@ Simple regression analysis shows:
 - Slope: ${slope.toFixed(2)}
 - Intercept: ${intercept.toFixed(2)}
 - R-squared: ${rSquared.toFixed(3)}
+
 This indicates a(n) "${fallbackTrend}" trend.
 
-Respond in this format:
+Respond in ${langName}. Format your answer like this:
 "The data shows a [increasing/decreasing/stable] trend in ${trendCol} over time."
+
+Use beginner-friendly language and keep it short and clear.
 `;
 
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });

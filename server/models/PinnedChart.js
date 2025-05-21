@@ -6,6 +6,7 @@ const pinnedChartSchema = new mongoose.Schema({
   type: String,
   config: Object,
   data: Object,
+  fileName: String,
   createdAt: { type: Date, default: Date.now }
 });
 
