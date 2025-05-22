@@ -21,10 +21,15 @@ import EmailInput from "../useraiinsighs/EmailInput";
 import InsightList from "../useraiinsighs/InsightList";
 import ConfirmModal from "../useraiinsighs/ConfirmModal";
 import TrendDetection from "../useraiinsighs/TrendDetection";
+import { useTranslation } from "react-i18next";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const AIInsights = () => {
+  const { t } = useTranslation();
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language;
+
   const { files, selectedFileId, setSelectedFileId, fileData, fetchFiles } =
     useFilesContext();
   const { localFile } = useLocalFile();
@@ -75,6 +80,7 @@ const AIInsights = () => {
         xAxis,
         yAxis,
         chartType,
+        language: i18n.language
       });
     }
   }, [selectedFileId, fileData, localFile, xAxis, yAxis, chartType]);
@@ -99,7 +105,7 @@ const AIInsights = () => {
       });
       setInsights(res.data);
     } catch {
-      setError("Failed to fetch insights. Please try again.");
+      setError(t("aiInsights.fetchError", "Failed to fetch insights. Please try again."));
     } finally {
       setLoading(false);
       setConfirmed(false);
@@ -117,7 +123,7 @@ const AIInsights = () => {
       await shareInsights(
         insights,
         fileData.fileName,
-        token,
+        sessionStorage.getItem("token"),
         setShareLink,
         setShareId
       );
@@ -128,7 +134,7 @@ const AIInsights = () => {
 
   const handleEmailShare = async () => {
     try {
-      await emailShare(email, shareId, token);
+      await emailShare(email, shareId, sessionStorage.getItem("token"));
       setEmail("");
       setShowEmailInput(false);
     } catch (err) {
@@ -159,6 +165,7 @@ const AIInsights = () => {
           type: "insights",
           data: insights,
           fileData: fileData.data,
+          language: i18n.language,
         },
         {
           headers: {
@@ -168,7 +175,7 @@ const AIInsights = () => {
       );
       setExplanation(response.data.explanation);
     } catch (error) {
-      setExplainError("Failed to generate explanation. Please try again.");
+      setExplainError(t("aiInsights.explainError", "Failed to generate explanation. Please try again."));
     } finally {
       setLoadingExplanation(false);
     }
@@ -230,7 +237,7 @@ const AIInsights = () => {
           )}
           {shareLink && (
             <p className="mt-4 text-green-700 break-all">
-              Share Link:{" "}
+              {t("aiInsights.shareLinkLabel", "Share Link:")}{" "}
               <a
                 href={shareLink}
                 target="_blank"
@@ -254,7 +261,13 @@ const AIInsights = () => {
 
       <AnimatePresence>
         {showConfirmModal && (
-          <ConfirmModal onCancel={handleCancel} onProceed={handleProceed} />
+          <ConfirmModal
+            onCancel={handleCancel}
+            onProceed={handleProceed}
+            confirmText={t("aiInsights.confirmText", "Are you sure you want to generate insights?")}
+            cancelText={t("aiInsights.cancelText", "Cancel")}
+            proceedText={t("aiInsights.proceedText", "Proceed")}
+          />
         )}
       </AnimatePresence>
     </div>

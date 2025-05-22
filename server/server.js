@@ -13,6 +13,7 @@ import adminFileRoutes from "./routes/adminFileRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import trendsRoutes from "./routes/trendsRoutes.js";
 import explainRoutes from "./routes/explainRoutes.js";
+import pinnedChartsRoutes from './routes/pinnedCharts.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -33,6 +34,8 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/trends", trendsRoutes);
 
 app.use("/api/explain", explainRoutes);
+
+app.use('/api/pinned-charts', pinnedChartsRoutes);
 
 app.use("/api/admin", adminRoutes);
 

@@ -4,11 +4,15 @@ import FileTable from "../userhistory/FileTable";
 import FileModal from "../userhistory/FileModal";
 import { motion } from "framer-motion";
 import { fadeInUp } from "../animations/fadeInUp";
+import { useTranslation } from "react-i18next";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const History = () => {
+  const { t } = useTranslation();
+
   const [files, setFiles] = useState([]);
+  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedFileContent, setSelectedFileContent] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -21,6 +25,7 @@ const History = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setFiles(res.data);
+        setHistory(res.data.map((file) => file.fileName));
       } catch (error) {
         console.error("Error fetching files", error);
       } finally {
@@ -36,6 +41,7 @@ const History = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setFiles((prev) => prev.filter((file) => file._id !== id));
+      setHistory((prev) => prev.filter((_, idx) => files[idx]._id !== id));
     } catch (err) {
       console.error("Delete failed", err);
     }
@@ -72,7 +78,7 @@ const History = () => {
     }
   };
 
-  if (loading) return <p className="text-center">Loading...</p>;
+  if (loading) return <p className="text-center">{t("loading")}</p>;
 
   return (
     <div className="p-4 md:p-8 bg-[#f0f8ff] min-h-screen">
@@ -83,7 +89,7 @@ const History = () => {
         variants={fadeInUp}
         className="text-2xl font-bold text-blue-800 mb-6 animate-fade-in-up"
       >
-        📁 Uploaded Files
+        📁 {t("history.uploadedFiles")}
       </motion.h2>
 
       <FileTable

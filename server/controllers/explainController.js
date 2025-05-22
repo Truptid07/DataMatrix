@@ -2,7 +2,17 @@ import genAI from "../config/geminiClient.js";
 
 export const explainContent = async (req, res) => {
   try {
-    const { type, data, fileData } = req.body;
+    const { type, data, fileData, language } = req.body;
+
+    const languageMap = {
+      en: "English",
+      hi: "Hindi",
+      fr: "French",
+      es: "Spanish",
+      de: "German",
+    };
+
+    const langName = languageMap[language] || "English";
 
     if (!type || !["insights", "trends"].includes(type)) {
       return res.status(400).json({ error: "Invalid or missing 'type'." });
@@ -19,28 +29,30 @@ export const explainContent = async (req, res) => {
     let prompt = "";
 
     if (type === "insights") {
-      // Compose a prompt that explains the insights clearly for a newbie
       prompt = `
-You are a helpful assistant explaining data insights to a beginner. Given these insights extracted from a dataset, explain in simple and clear language what they mean, so someone new to data analysis can understand.
+You are a helpful assistant explaining data insights to a beginner.
+Given these insights extracted from a dataset, explain in simple and clear language what they mean so someone new to data analysis can understand.
 
 Here are the insights:
 ${JSON.stringify(data, null, 2)}
 
 The dataset has these columns: ${Object.keys(fileData[0]).join(", ")}.
 
-Explain the insights in an easy-to-understand way.
+Respond in ${langName}. Make sure your explanation is beginner-friendly and avoids technical jargon.
       `;
     } else if (type === "trends") {
-      // Compose a prompt to explain trend analysis results simply
       prompt = `
 You are a helpful assistant explaining trend analysis results to someone new to data analysis.
 
 Here is the trend summary:
 ${data.summary}
 
-The trend analysis was done on these columns: ${Object.keys(fileData[0]).join(", ")}.
+The trend analysis was done on these columns: ${Object.keys(fileData[0]).join(
+        ", "
+      )}.
 
 Explain what this trend means in simple terms a beginner can understand.
+Respond in ${langName}. Keep the explanation concise and easy to follow.
       `;
     }
 

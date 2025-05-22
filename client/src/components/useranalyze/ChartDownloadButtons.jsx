@@ -1,6 +1,9 @@
 import html2canvas from "html2canvas";
+import { useTranslation } from "react-i18next";
 
 export function Download2DChartButton({ chartRef }) {
+  const { t } = useTranslation();
+
   const handle2DownloadChart = async () => {
     if (!chartRef.current) return;
     const canvas = await html2canvas(chartRef.current, {
@@ -18,12 +21,14 @@ export function Download2DChartButton({ chartRef }) {
       onClick={handle2DownloadChart}
       className="mb-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
     >
-      Download Chart as PNG
+      {t("analyze.download2D")}
     </button>
   );
 }
 
 export function Download3DChartButton({ canvasRef }) {
+  const { t } = useTranslation();
+
   const handle3Download = () => {
     if (!canvasRef.current) return;
     const link = document.createElement("a");
@@ -37,7 +42,7 @@ export function Download3DChartButton({ canvasRef }) {
       onClick={handle3Download}
       className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
     >
-      Download 3D Chart
+      {t("analyze.download3D")}
     </button>
   );
 }
