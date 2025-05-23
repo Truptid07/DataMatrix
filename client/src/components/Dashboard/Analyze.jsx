@@ -10,6 +10,7 @@ import FileAndAxisSelectors from "../useranalyze/FileAndAxisSelectors";
 import SaveToDashboardButton from "../useranalyze/SaveToDashboardButton";
 import Chart2DSection from "../useranalyze/Chart2DSection";
 import Chart3DSection from "../useranalyze/Chart3DSection";
+import BestSuggestion from "../useranalyze/BestSuggestion";
 
 function Analyze() {
   const { t } = useTranslation();
@@ -119,6 +120,7 @@ function Analyze() {
 
       {fileData && (
         <>
+          <BestSuggestion fileData={fileData} />
           <Chart2DSection
             fileData={fileData}
             xAxis={xAxis}
