@@ -9,6 +9,7 @@ import * as XLSX from "xlsx";
 import { useFilesContext } from "../../context/FileContext";
 import { useLocalFile } from "../../context/LocalFileContext";
 import { useTranslation } from "react-i18next";
+import ChartRenderer from "../useranalyze/ChartRenderer";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -30,6 +31,36 @@ const ChatWithFile = () => {
   const { t } = useTranslation();
   const { i18n } = useTranslation();
   const currentLang = i18n.language;
+
+  const answerSection = answer
+  .match(/## Answer([\s\S]*?)##/i)?.[1]
+  ?.trim();
+const chartsSection = answer
+  .match(/## Suggested Charts([\s\S]*?)##/i)?.[1]
+  ?.trim();
+const tipSection = answer
+  .match(/## Exploration Tip([\s\S]*)/i)?.[1]
+  ?.trim();
+
+
+  const extractChartSuggestions = (chartsText) => {
+    const chartRegex =
+      /\d+\.\s*Chart type:\s*(.+?)\s*[\n\r]+Variables to plot:\s*(.+?)\s*[\n\r]+.*?:\s*(.+)/gi;
+    const matches = [...chartsText.matchAll(chartRegex)];
+
+    return matches.map(([, type, variables, reason]) => {
+      const [y, x] = variables.split(" vs ").map((v) => v.trim());
+      return {
+        chartType: type.toLowerCase(),
+        xAxis: x,
+        yAxis: y,
+        reason,
+      };
+    });
+  };
+  const chartSuggestions = chartsSection
+    ? extractChartSuggestions(chartsSection)
+    : [];
 
   // Fetch backend files on mount
   useEffect(() => {
@@ -236,6 +267,38 @@ const ChatWithFile = () => {
           >
             {answer}
           </ReactMarkdown>
+          {chartSuggestions.length > 0 && (
+            <div>
+              <h2 className="text-xl font-semibold mb-2">Suggested Charts</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {chartSuggestions.map((chart, index) => (
+                  <div
+                    key={index}
+                    className="border p-4 rounded-xl shadow bg-white"
+                  >
+                    <p className="mb-2 text-sm text-gray-600">
+                      <strong>{chart.chartType.toUpperCase()}</strong>:{" "}
+                      {chart.reason}
+                    </p>
+                    <ChartRenderer
+                      fileData={activeData}
+                      xAxis={chart.xAxis}
+                      yAxis={chart.yAxis}
+                      chartType={chart.chartType}
+                      isSmall={true}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {tipSection && (
+            <div>
+              <h2 className="text-xl font-semibold mb-2">Exploration Tip</h2>
+              <p className="text-gray-700">{tipSection}</p>
+            </div>
+          )}
           <div className="mt-4 flex gap-4">
             <button
               onClick={() =>

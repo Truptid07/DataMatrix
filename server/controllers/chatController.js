@@ -3,7 +3,7 @@ import genAI from "../config/geminiClient.js";
 export const chatWithData = async (req, res) => {
   try {
     const { question, fileData, language } = req.body;
-
+    const parsedData = typeof fileData === "string" ? JSON.parse(fileData) : fileData;
     const languageMap = {
       en: "English",
       hi: "Hindi",
@@ -19,20 +19,33 @@ export const chatWithData = async (req, res) => {
     }
 
     const prompt = `
-You are a helpful and expert data analyst.
+You are a helpful data analyst. You are given a user's question and a table of data.
 
-Please answer the user's question based on the dataset provided below. Respond in ${langName} and use beginner-friendly, plain language.
+Question: ${question}
 
-Here is the user's question:
-"${question}"
+Data:
+${JSON.stringify(parsedData.slice(0, 20))}
 
-Here is the dataset:
-${JSON.stringify(fileData.slice(0, 100), null, 2)}
+Your task is to:
+1. Answer the user's question clearly in plain English.
+2. Suggest up to 3 charts that would best visualize the data, based on the question and dataset.
+   - For each chart, include:
+     - Chart type (e.g., bar, line, pie, scatter)
+     - Variables to plot (e.g., "Sales vs Date")
+     - One sentence on why this chart is useful
+3. Provide one bonus data exploration tip to further understand the data.
 
-Analyze the data and provide a clear, concise, and human-readable explanation. Focus on patterns, insights, and reasons found in the data.
+Respond in Markdown format with clear headers: 
+## Answer
+... your main response ...
 
-Do NOT include any code or JSON in the response. Provide a plain language explanation only.
+## Suggested Charts
+1. ...
+
+## Exploration Tip
+... something the user might explore next ...
 `;
+
 
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     const result = await model.generateContent(prompt);
