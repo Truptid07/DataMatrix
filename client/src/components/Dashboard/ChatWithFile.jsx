@@ -28,6 +28,8 @@ const ChatWithFile = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { t } = useTranslation();
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language;
 
   // Fetch backend files on mount
   useEffect(() => {
@@ -113,6 +115,7 @@ const ChatWithFile = () => {
         {
           question: question.trim(),
           fileData: activeData.data.slice(0, 100),
+          language: i18n.language,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );

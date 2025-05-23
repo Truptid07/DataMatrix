@@ -2,7 +2,17 @@ import genAI from "../config/geminiClient.js";
 
 export const chatWithData = async (req, res) => {
   try {
-    const { question, fileData } = req.body;
+    const { question, fileData, language } = req.body;
+
+    const languageMap = {
+      en: "English",
+      hi: "Hindi",
+      fr: "French",
+      es: "Spanish",
+      de: "German",
+    };
+
+    const langName = languageMap[language] || "English";
 
     if (!question || !fileData) {
       return res.status(400).json({ error: "Missing question or file data" });
@@ -10,13 +20,18 @@ export const chatWithData = async (req, res) => {
 
     const prompt = `
 You are a helpful and expert data analyst.
-Here's the user's question: "${question}"
+
+Please answer the user's question based on the dataset provided below. Respond in ${langName} and use beginner-friendly, plain language.
+
+Here is the user's question:
+"${question}"
 
 Here is the dataset:
-${JSON.stringify(fileData.slice(0, 100), null, 2)} 
+${JSON.stringify(fileData.slice(0, 100), null, 2)}
 
-Analyze the data and provide a clear, concise, human-readable explanation. Focus on insights, reasons, or patterns found in the dataset.
-Do NOT include any code or JSON. Just plain explanation.
+Analyze the data and provide a clear, concise, and human-readable explanation. Focus on patterns, insights, and reasons found in the data.
+
+Do NOT include any code or JSON in the response. Provide a plain language explanation only.
 `;
 
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
