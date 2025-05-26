@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function Upload() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
@@ -24,6 +24,11 @@ function Upload() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { setLocalFile } = useLocalFile();
+  const [languageKey, setLanguageKey] = useState(0);
+
+  useEffect(() => {
+    setLanguageKey((prev) => prev + 1);
+  }, [i18n.language]);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -79,7 +84,7 @@ function Upload() {
 
     try {
       setLoading(true);
-      const res = await axios.post(`${BASE_URL}/api/files/upload`, formData, {
+      await axios.post(`${BASE_URL}/api/files/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
@@ -95,79 +100,95 @@ function Upload() {
   };
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-10 min-h-screen bg-gradient-to-br from-[#dff1fd] to-[#b3dcf3] flex justify-center items-center">
-      <AnimatePresence>{loading && <LoaderOverlay />}</AnimatePresence>
-      <motion.form
-        onSubmit={handleSubmit}
-        className="bg-white/70 backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-2xl shadow-2xl w-full max-w-md"
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={languageKey}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.4 }}
+        className="px-4 sm:px-6 md:px-8 py-10 min-h-screen bg-gradient-to-br from-[#dff1fd] to-[#b3dcf3] flex justify-center items-center"
       >
-        <motion.h2
-          custom={0}
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          className="text-xl sm:text-2xl font-bold text-center text-[#007ea7] mb-2 outfit"
-        >
-          {t("upload.title")}
-        </motion.h2>
-        <motion.p
-          custom={0.1}
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          className="text-center text-xs sm:text-sm text-blue-900 mb-6"
-        >
-          {t("upload.supportedFormats")}
-        </motion.p>
+        <AnimatePresence>{loading && <LoaderOverlay />}</AnimatePresence>
 
-        <FileInput
-          custom={0.2}
+        <motion.form
+          onSubmit={handleSubmit}
           initial="hidden"
           animate="visible"
           variants={fadeInUp}
-          onChange={handleFileChange}
-        />
-        {file && (
-          <SelectedFileDisplay
-            custom={0.3}
+          className="bg-white/70 backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-2xl shadow-2xl w-full max-w-md"
+        >
+          <motion.h2
+            custom={0}
             initial="hidden"
             animate="visible"
             variants={fadeInUp}
-            fileName={file.name}
-            onRemove={handleRemoveFile}
-          />
-        )}
-        <motion.button
-          custom={0.4}
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          type="submit"
-          className="w-full bg-[#00ACC1] text-white py-2 rounded-xl shadow-md hover:bg-[#0097a7] transition duration-200"
-        >
-          {t("upload.uploadButton")}
-        </motion.button>
+            className="text-xl sm:text-2xl font-bold text-center text-[#007ea7] mb-2 outfit"
+          >
+            {t("upload.title")}
+          </motion.h2>
 
-        <MessageDisplay
-          custom={0.1}
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          message={message}
-        />
-
-        {message.startsWith("✅") && (
-          <UploadButtons
+          <motion.p
             custom={0.1}
             initial="hidden"
             animate="visible"
             variants={fadeInUp}
-            onAnalyze={() => navigate("/dashboard/analyze")}
-            onUpload={handleUploadToServer}
+            className="text-center text-xs sm:text-sm text-blue-900 mb-6"
+          >
+            {t("upload.supportedFormats")}
+          </motion.p>
+
+          <FileInput
+            custom={0.2}
+            initial="hidden"
+            animate="visible"
+            variants={fadeInUp}
+            onChange={handleFileChange}
           />
-        )}
-      </motion.form>
-    </div>
+
+          {file && (
+            <SelectedFileDisplay
+              custom={0.3}
+              initial="hidden"
+              animate="visible"
+              variants={fadeInUp}
+              fileName={file.name}
+              onRemove={handleRemoveFile}
+            />
+          )}
+
+          <motion.button
+            custom={0.4}
+            initial="hidden"
+            animate="visible"
+            variants={fadeInUp}
+            type="submit"
+            className="w-full bg-[#00ACC1] text-white py-2 rounded-xl shadow-md hover:bg-[#0097a7] transition duration-200"
+          >
+            {t("upload.uploadButton")}
+          </motion.button>
+
+          <MessageDisplay
+            custom={0.5}
+            initial="hidden"
+            animate="visible"
+            variants={fadeInUp}
+            message={message}
+          />
+
+          {message.startsWith("✅") && (
+            <UploadButtons
+              custom={0.6}
+              initial="hidden"
+              animate="visible"
+              variants={fadeInUp}
+              onAnalyze={() => navigate("/dashboard/analyze")}
+              onUpload={handleUploadToServer}
+            />
+          )}
+        </motion.form>
+      </motion.div>
+    </AnimatePresence>
   );
 }
 

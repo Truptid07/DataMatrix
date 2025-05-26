@@ -12,6 +12,16 @@
     "axis": "X : {{x}}, Y : {{y}}",
     "unpin": "Détacher"
   },
+  "settings": {
+    "updateProfile": "Mettre à jour le profil",
+    "updateSuccess": "Profil mis à jour avec succès !",
+    "updateFail": "Échec de la mise à jour.",
+    "namePlaceholder": "Votre nom",
+    "emailPlaceholder": "Adresse e-mail",
+    "passwordPlaceholder": "Nouveau mot de passe (facultatif)",
+    "updateButton": "Mettre à jour le profil"
+  },
+
   "sidebar": {
     "dashboard": "Tableau de bord",
     "uploadExcel": "Télécharger Excel",

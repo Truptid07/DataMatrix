@@ -26,8 +26,7 @@ import { useTranslation } from "react-i18next";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const AIInsights = () => {
-  const { t } = useTranslation();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
 
   const { files, selectedFileId, setSelectedFileId, fileData, fetchFiles } =
@@ -80,7 +79,7 @@ const AIInsights = () => {
         xAxis,
         yAxis,
         chartType,
-        language: i18n.language
+        language: i18n.language,
       });
     }
   }, [selectedFileId, fileData, localFile, xAxis, yAxis, chartType]);
@@ -113,9 +112,7 @@ const AIInsights = () => {
   };
 
   const handleCopy = (text) => copyToClipboard(text);
-
   const handleExportTxt = () => exportInsightsTxt(insights);
-
   const handleExportPdf = () => exportInsightsPdf(insights);
 
   const handleShare = async () => {
@@ -182,7 +179,13 @@ const AIInsights = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-5xl">
+    <motion.div
+      key={i18n.language}
+      variants={fadeInUp}
+      initial="hidden"
+      animate="visible"
+      className="container mx-auto p-4 max-w-5xl"
+    >
       <FileSelector
         files={files}
         localFile={localFile}
@@ -207,6 +210,7 @@ const AIInsights = () => {
           loading={loading}
         />
       )}
+
       {availableColumns.length > 0 && (
         <TrendDetection
           selectedFileId={selectedFileId}
@@ -228,6 +232,7 @@ const AIInsights = () => {
             onExplainInsights={handleExplainInsights}
             loadingExplanation={loadingExplanation}
           />
+
           {showEmailInput && (
             <EmailInput
               email={email}
@@ -235,6 +240,7 @@ const AIInsights = () => {
               onSend={handleEmailShare}
             />
           )}
+
           {shareLink && (
             <p className="mt-4 text-green-700 break-all">
               {t("aiInsights.shareLinkLabel", "Share Link:")}{" "}
@@ -248,7 +254,9 @@ const AIInsights = () => {
               </a>
             </p>
           )}
+
           <InsightList insights={insights} onCopy={handleCopy} />
+
           {explainError && <p className="text-red-600 mt-2">{explainError}</p>}
 
           {explanation && (
@@ -270,7 +278,7 @@ const AIInsights = () => {
           />
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 };
 
