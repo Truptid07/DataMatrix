@@ -35,12 +35,14 @@ function Topbar() {
       animate="visible"
     >
       <LanguageSwitcher />
+
       <motion.span
         variants={itemVariants}
         className="text-[#2E3C43] outfit font-semibold"
       >
         {user?.name}
       </motion.span>
+
       <motion.button
         variants={itemVariants}
         onClick={handleLogout}
