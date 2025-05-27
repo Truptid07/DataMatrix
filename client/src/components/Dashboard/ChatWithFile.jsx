@@ -144,13 +144,13 @@ const ChatWithFile = () => {
   ];
 
   return (
-    <motion.div
-      key={i18n.language}
-      initial="hidden"
-      animate="visible"
-      variants={fadeInUp}
-      className="max-w-5xl mx-auto px-4 sm:px-8 py-8 text-gray-800"
-    >
+<motion.div
+  key={i18n.language}
+  initial="hidden"
+  animate="visible"
+  variants={fadeInUp}
+  className="max-w-5xl mx-auto px-4 sm:px-8 py-8 text-gray-800"
+>
       <h1 className="text-3xl font-bold mb-8">{t("chatWithFile.title")}</h1>
 
       <div className="space-y-6">
@@ -321,7 +321,7 @@ const ChatWithFile = () => {
           </motion.div>
         )}
       </div>
-    </motion.div>
+</motion.div>
   );
 };
 
