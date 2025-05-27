@@ -12,6 +12,16 @@
     "axis": "X: {{x}}, Y: {{y}}",
     "unpin": "पिन हटाएं"
   },
+  "settings": {
+    "updateProfile": "प्रोफ़ाइल अपडेट करें",
+    "updateSuccess": "प्रोफ़ाइल सफलतापूर्वक अपडेट की गई!",
+    "updateFail": "अपडेट विफल रहा।",
+    "namePlaceholder": "आपका नाम",
+    "emailPlaceholder": "ईमेल पता",
+    "passwordPlaceholder": "नया पासवर्ड (वैकल्पिक)",
+    "updateButton": "प्रोफ़ाइल अपडेट करें"
+  },
+
   "sidebar": {
     "dashboard": "डैशबोर्ड",
     "uploadExcel": "एक्सेल अपलोड करें",

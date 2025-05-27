@@ -11,6 +11,7 @@ import { useFilesContext } from "../../context/FileContext";
 import { useLocalFile } from "../../context/LocalFileContext";
 import { useTranslation } from "react-i18next";
 import ChartRenderer from "../useranalyze/ChartRenderer";
+import { fadeInUp } from "../animations/fadeInUp";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -143,7 +144,13 @@ const ChatWithFile = () => {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8 text-gray-800">
+<motion.div
+  key={i18n.language}
+  initial="hidden"
+  animate="visible"
+  variants={fadeInUp}
+  className="max-w-5xl mx-auto px-4 sm:px-8 py-8 text-gray-800"
+>
       <h1 className="text-3xl font-bold mb-8">{t("chatWithFile.title")}</h1>
 
       <div className="space-y-6">
@@ -314,7 +321,7 @@ const ChatWithFile = () => {
           </motion.div>
         )}
       </div>
-    </div>
+</motion.div>
   );
 };
 

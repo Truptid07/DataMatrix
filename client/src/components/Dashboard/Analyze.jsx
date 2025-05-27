@@ -13,7 +13,7 @@ import Chart3DSection from "../useranalyze/Chart3DSection";
 import BestSuggestion from "../useranalyze/BestSuggestion";
 
 function Analyze() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { token } = useSelector((state) => state.auth);
   const {
     files,
@@ -75,6 +75,7 @@ function Analyze() {
 
   return (
     <motion.div
+      key={i18n.language}
       className="p-4 sm:p-6 lg:p-10"
       initial="hidden"
       animate="visible"
@@ -121,6 +122,7 @@ function Analyze() {
       {fileData && (
         <>
           <BestSuggestion fileData={fileData} />
+
           <Chart2DSection
             fileData={fileData}
             xAxis={xAxis}

@@ -12,6 +12,16 @@
     "axis": "X: {{x}}, Y: {{y}}",
     "unpin": "Unpin"
   },
+  "settings": {
+    "updateProfile": "Update Profile",
+    "updateSuccess": "Profile updated successfully!",
+    "updateFail": "Update failed.",
+    "namePlaceholder": "Your Name",
+    "emailPlaceholder": "Email Address",
+    "passwordPlaceholder": "New Password (optional)",
+    "updateButton": "Update Profile"
+  },
+
   "sidebar": {
     "dashboard": "Dashboard",
     "uploadExcel": "Upload Excel",

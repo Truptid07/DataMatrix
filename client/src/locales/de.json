@@ -12,6 +12,16 @@
     "axis": "X: {{x}}, Y: {{y}}",
     "unpin": "Lösen"
   },
+  "settings": {
+    "updateProfile": "Profil aktualisieren",
+    "updateSuccess": "Profil erfolgreich aktualisiert!",
+    "updateFail": "Aktualisierung fehlgeschlagen.",
+    "namePlaceholder": "Ihr Name",
+    "emailPlaceholder": "E-Mail-Adresse",
+    "passwordPlaceholder": "Neues Passwort (optional)",
+    "updateButton": "Profil aktualisieren"
+  },
+
   "sidebar": {
     "dashboard": "Dashboard",
     "uploadExcel": "Excel hochladen",
