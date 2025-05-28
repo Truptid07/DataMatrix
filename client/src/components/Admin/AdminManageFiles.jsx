@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { fadeInUp } from "../animations/fadeInUp";
+import { useConfirm } from "../../context/ConfirmContext";
 
 import SearchFilters from "../adminmanagefiles/SearchFilters";
 import FileTable from "../adminmanagefiles/FileTable";
@@ -17,6 +18,7 @@ export default function AdminManageFiles() {
   const [roleFilter, setRoleFilter] = useState("");
   const [page, setPage] = useState(1);
   const filesPerPage = 5;
+  const { confirm } = useConfirm();
 
   useEffect(() => {
     axios
@@ -43,7 +45,9 @@ export default function AdminManageFiles() {
   };
 
   const deleteFile = async (id) => {
-    if (!window.confirm("Delete this file?")) return;
+    const shouldDelete = await confirm("Delete this file?");
+    if (!shouldDelete) return;
+
     try {
       await axios.delete(`${BASE_URL}/api/admin/files/${id}`, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
@@ -51,6 +55,7 @@ export default function AdminManageFiles() {
       setFiles((f) => f.filter((x) => x._id !== id));
     } catch (err) {
       console.error(err);
+      // Optionally use a custom alert here too
       alert("Delete failed");
     }
   };
