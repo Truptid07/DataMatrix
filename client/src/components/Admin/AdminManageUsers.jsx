@@ -6,6 +6,7 @@ import UsersTable from "../adminmanageusers/UsersTable";
 import PaginationControls from "../adminmanageusers/PaginationControls";
 import { motion } from "framer-motion";
 import { fadeInUp } from "../animations/fadeInUp";
+import { useConfirm } from "../../context/ConfirmContext";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -17,6 +18,7 @@ export default function AdminManageUsers() {
   const [roleFilter, setRoleFilter] = useState("");
   const [page, setPage] = useState(1);
   const filesPerPage = 5;
+  const { confirm } = useConfirm();
   const navigate = useNavigate();
 
   const fetchUsers = async () => {
@@ -61,7 +63,9 @@ export default function AdminManageUsers() {
   };
 
   const deleteUser = async (id) => {
-    if (!window.confirm("Delete this user?")) return;
+    const shouldDelete = await confirm("Delete this user?");
+    if (!shouldDelete) return;
+
     try {
       await axios.delete(`${BASE_URL}/api/admin/users/${id}`, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
