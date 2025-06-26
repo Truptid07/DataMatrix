@@ -45,6 +45,13 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/admin/users", adminUserRoutes);
 
 app.use("/api/admin/files", adminFileRoutes);
+
+// Health check route
+app.get("/health", (req, res) => {
+  console.log("🩺 Health check at:", new Date().toLocaleString());
+  res.status(200).send("OK");
+});
+
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
@@ -52,8 +59,3 @@ mongoose.connect(process.env.MONGO_URI)
         app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
     })
     .catch((error) => console.error("MongoDB connection failed:", error));
-
-app.get("/", (req, res) => {
-  console.log("✅ Ping received at:", new Date().toLocaleString());
-  res.status(200).send("Backend is alive!");
-});
