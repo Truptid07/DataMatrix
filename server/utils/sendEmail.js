@@ -1,22 +1,37 @@
 import nodemailer from "nodemailer";
 
 const sendEmail = async ({ to, subject, text }) => {
-  const transporter = nodemailer.createTransport({
-    service: "gmail", // or any SMTP provider
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+  try {
+    // Check if email credentials are properly configured
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || 
+        process.env.EMAIL_USER === 'dummy@example.com') {
+      console.log('📧 Email not configured. Skipping email send.');
+      console.log(`Would have sent: ${subject} to ${to}`);
+      return { success: false, message: 'Email not configured' };
+    }
 
-  const mailOptions = {
-    from: `"SheetSense" <${process.env.EMAIL_USER}>`,
-    to,
-    subject,
-    text,
-  };
+    const transporter = nodemailer.createTransporter({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
 
-  await transporter.sendMail(mailOptions);
+    const mailOptions = {
+      from: `"DataMatrix" <${process.env.EMAIL_USER}>`,
+      to,
+      subject,
+      text,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('📧 Email sent successfully');
+    return { success: true };
+  } catch (error) {
+    console.error('📧 Email send failed:', error.message);
+    return { success: false, message: error.message };
+  }
 };
 
 export default sendEmail;

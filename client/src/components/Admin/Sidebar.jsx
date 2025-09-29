@@ -91,7 +91,7 @@ function Sidebar() {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="fixed inset-y-0 left-0 z-50 w-64 bg-[#00ACC1] text-white p-6 flex flex-col gap-6 shadow-lg rounded-tr-3xl rounded-br-3xl md:hidden"
+              className="fixed inset-y-0 left-0 z-50 w-64 bg-white/20 backdrop-blur-lg border border-white/20 text-white p-6 flex flex-col gap-6 shadow-lg rounded-tr-3xl rounded-br-3xl md:hidden"
             >
               <div className="flex justify-end">
                 <button
@@ -106,13 +106,11 @@ function Sidebar() {
                 variants={itemVariants}
                 className="flex items-center gap-3 mb-8"
               >
-                <img
-                  src="./logo.png"
-                  alt="SheetSense Logo"
-                  className="w-10 h-10"
-                />
+                <div className="w-10 h-10 bg-gradient-to-br from-white to-blue-100 rounded-xl shadow-lg flex items-center justify-center">
+                  <span className="text-lg font-bold bg-gradient-to-r from-[#667eea] to-[#764ba2] bg-clip-text text-transparent">DM</span>
+                </div>
                 <h2 className="text-2xl font-bold outfit tracking-wide text-white">
-                  Admin Panel
+                  DataMatrix Admin
                 </h2>
               </motion.div>
 
@@ -136,7 +134,7 @@ function Sidebar() {
         variants={sidebarVariants}
         initial="hidden"
         animate="visible"
-        className="hidden md:flex w-64 bg-[#00ACC1] text-white p-6 flex-col gap-6 shadow-lg rounded-tr-3xl rounded-br-3xl"
+        className="hidden md:flex w-64 bg-white/20 backdrop-blur-lg border border-white/20 text-white p-6 flex-col gap-6 shadow-lg rounded-tr-3xl rounded-br-3xl"
       >
         <motion.div
           variants={itemVariants}
@@ -144,7 +142,7 @@ function Sidebar() {
         >
           <Logo />
           <h2 className="text-2xl font-bold outfit tracking-wide text-white">
-            Admin Panel
+            
           </h2>
         </motion.div>
 

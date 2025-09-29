@@ -1,5 +1,5 @@
 
-# 📊 Excel Analytics Platform
+# 📊 DataMatrix Excel Analytics Platform
 
 A full-stack Excel analytics web application built as part of an internship project. This platform allows users to upload Excel files, perform data analysis, and visualize results through an intuitive dashboard. It features secure authentication, role-based access control, and a modern UI.
 

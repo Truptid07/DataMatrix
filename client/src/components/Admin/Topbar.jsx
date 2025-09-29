@@ -8,13 +8,13 @@ const Topbar = ({ user, handleLogout }) => (
     animate="visible"
   >
     <motion.span
-      className="text-[#2E3C43] outfit font-semibold"
+      className="text-white outfit font-semibold"
     >
       {user?.name}
     </motion.span>
     <motion.button
       onClick={handleLogout}
-      className="bg-white text-[#00ACC1] px-4 py-2 rounded shadow-sm hover:bg-[#4DD0E1] hover:text-white transition-all cursor-pointer outfit font-semibold"
+      className="bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded border border-white/30 hover:bg-white/30 hover:text-white transition-all cursor-pointer outfit font-semibold"
     >
       Logout
     </motion.button>
