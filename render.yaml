@@ -1,0 +1,58 @@
+services:
+  # Backend API Service
+  - type: web
+    name: datamatrix-api
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    rootDir: server
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        value: 5a22f470a58797fcce51f69a8fed748237ec9e90084e987234f725f8972b69d0a6dbf102f7c3299049399b96cda2ca3abbf328204455ba538cfd8af600431624
+      # MongoDB Configuration - TWO OPTIONS:
+      # Option 1: Set MONGO_URI directly (uncommented and ready to use)
+      - key: MONGO_URI
+        value: mongodb+srv://admin:Vxf3OkO4vVh9abMT@data.4o0pbic.mongodb.net/test?retryWrites=true&w=majority&appName=data
+      
+      # Option 2: Set separate credentials (still available as backup)
+      - key: MONGO_USERNAME
+        value: admin
+      - key: MONGO_PASSWORD
+        value: Vxf3OkO4vVh9abMT
+      - key: MONGO_CLUSTER
+        value: data.4o0pbic.mongodb.net
+      
+      # Frontend URL for CORS
+      - key: CLIENT_URL
+        value: https://datamatrix-frontend.netlify.app
+      
+      # AI API Keys (add these in the Render dashboard)
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+
+  # Frontend Static Site Service  
+  - type: static
+    name: datamatrix-frontend
+    buildCommand: cd client && npm install && npm run build
+    publishPath: client/dist
+    pullRequestPreviewsEnabled: false
+    # Custom headers for SPA routing
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options  
+        value: nosniff
+    # Routes for React Router
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

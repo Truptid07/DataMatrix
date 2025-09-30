@@ -1,0 +1,4 @@
+# Configure Render build cache to improve build speed
+node_modules/
+server/node_modules/
+client/node_modules/
