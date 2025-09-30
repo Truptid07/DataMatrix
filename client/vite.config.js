@@ -10,11 +10,17 @@ export default defineConfig({
     include: [
       'react',
       'react-dom',
-      'react-router-dom'
+      'react-router-dom',
+      'tailwindcss',
+      'postcss',
+      'autoprefixer'
     ]
   },
   build: {
     sourcemap: false,
     outDir: 'dist'
+  },
+  css: {
+    postcss: './postcss.config.js'
   }
 })
