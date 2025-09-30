@@ -173,30 +173,20 @@ DataMatrix/
 
 ---
 
-## 🌟 Screenshots
-
-*Coming soon - Upload screenshots of your beautiful DataMatrix interface!*
 
 ---
 
 ## 🚀 Deployment
 
 The application is ready for deployment on platforms like:
-- **Vercel** (Frontend)
+- **netlify** (Frontend)
 - **Railway/Render** (Backend)
 - **MongoDB Atlas** (Database)
 
 ---
 
-## 📝 License
-
-This project is open source and available under the [MIT License](LICENSE).
 
 ---
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](../../issues).
 
 ---
 
